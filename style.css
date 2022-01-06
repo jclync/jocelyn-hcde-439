@@ -16,7 +16,7 @@ a {
 
 .plink {
   color: #000;
-  display: inline;
+  display: inline-block;
 }
 
 .header {
