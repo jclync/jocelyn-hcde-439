@@ -14,7 +14,7 @@ a {
   color: #000;
 }
 
-plink {
+.plink {
   color: #000;
   display: inline;
 }
@@ -25,7 +25,7 @@ plink {
   height: auto;
   padding: 30px 30px 30px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
