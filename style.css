@@ -23,6 +23,10 @@ a {
   display: inline;
 }
 
+.left {
+  max-width: 30vw;
+}
+
 .header {
   background: #fff;
   color: #000;
