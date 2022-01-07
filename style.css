@@ -23,6 +23,11 @@ a {
   display: inline;
 }
 
+.assignment a:hover {
+  background: #F06;
+  text-decoration: none;
+}
+
 .left {
   max-width: 35vw;
   padding-right:15vw;
