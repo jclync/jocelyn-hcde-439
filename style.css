@@ -19,14 +19,15 @@ a {
   display: inline;
 }
 
+.inline {
+  display: inline;
+}
+
 .header {
   background: #fff;
   color: #000;
   height: auto;
   padding: 30px 30px 30px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
 }
 
 .header h1 {
