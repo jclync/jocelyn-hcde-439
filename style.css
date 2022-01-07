@@ -23,7 +23,7 @@ a {
   display: inline;
 }
 
-.assignment a:hover {
+.inline a:hover {
   background: #F06;
   text-decoration: none;
 }
