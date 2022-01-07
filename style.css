@@ -24,7 +24,7 @@ a {
 }
 
 .inline a:hover {
-  background: #F06;
+  color: #F06;
   text-decoration: none;
 }
 
