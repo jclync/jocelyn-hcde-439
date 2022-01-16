@@ -4,22 +4,69 @@
         <meta charset="utf-8"> 
         <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
 
-        <title>Example Student's HCDE 439 Physical Computing Page!</title> 
+        <title>A1 - Blink!</title> 
 
         <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
 
     </head> 
     <body> 
-
         <div class="header">
-            <h1>Example Student's Assignment 1!</h1>
-            <p>
-            <img src="red-panda.jpg" width=400></a>
+            <div class="left">
+            <h1>Assignment 1 - Blink!!</h1>
+            <p>Here is all the documentation for Assignment 1!<br /><br />
+                For this assignment, I was tasked to:<br />
+                <ul>
+                    <li>create a schematic for a circuit containing at least 3 LEDs connected to Arduino</li>
+                    <li>implement this circuit using a breadboard</li>
+                    <li>write firmware in Arduino to make the LEDs blink in a pattern</li>
+                </ul><br /><br />
+                I decided to create a <em>traffic light</em> &#128678; by using red, yellow, and green LEDs.
             </p>
-            <p>
-            Here is all the documentation for assignment 1!
+            </div>
+            <p class="imgcaption"><img src="a1/blinkcircuit.gif" width=500></a><br />Here is a gif of my traffic light 
+                circuit in action!
             </p>
         </div>
-        
+        <div class="block">
+            <h2>Schematic</h2>
+            <div class="images">
+                <p class="imgcaption"><img src="a1/schematic-calculations.jpg" width=900px></a><br />Schematic and calculations 
+                    for my circuit.
+                </p>
+            </div>
+            <p>Since I was using red, yellow, and green LEDs for my circuit, I did one set of calculations to determine what 
+                the appropriate resistance to use for each LED. For red, yellow, and green LEDs, they all have <em>1.8V drop</em>, and 
+                the desired current for each of the three LEDs was <em>20mA, or 0.02A</em>(found based on the datasheets for the LEDs). When 
+                calculating the appropriate resistance to be used in the circuit, I started with calculating the voltage across. 
+                Knowing that the Arduino gives 5V, I calculated the voltage across as 3.2V (5V - 1.8V drop = 3.2V across). Using 
+                the known voltage across and the desired current, I then used Ohm's Law with the equation <strong>V=IR</strong> to get a value 
+                R=160&#8486; for resistance. To ensure that I did not overload the LEDs and cause them to burn out, 
+                I decided to round up and use a <em>220&#8486; resistor</em> (shown in schematic above calculations).
+            </p><br />
+            <h2>Circuit</h2>
+            <p> For my circuit, to make the traffic light, I used a red LED, yellow LED, and green LED.
+            <div class="images">
+                <p class="imgcaption"><img src="a1/blink-circuit-top.jpg" height=500></a><br />Top View of my Circuit</p>
+                <p class="imgcaption"><img src="a1/blink-circuit-side.jpg" width=500></a><br />Side View of my Circuit</p>
+            </div>
+            <p class="imgcaption"><img src="a1/circuit-diagram.png" width=700></a><br />
+                Here is the circuit, showing the LEDs connected to the Arduino.
+            </p>
+            <h2>Arduino Code</h2>
+            <div class="images">
+                <p class="imgcaption"><img src="a1/arduino-code.jpg" width=900px></a><br />Arduino code for my circuit.
+                </p>
+            </div>
+            <p>For my Arduino code, I initialized the pins with their corresponding colors, with Pin13 for the Red LED, Pin7 
+                for the Yellow LED, and Pin1 for the Green LED. I used the loop() function to have the code run over and over 
+                again forever. In this loop, I set the LEDs to alternate from green to yellow to red by turning the 
+                corresponding LEDs on by setting the voltage to HIGH or off by setting the voltage to LOW. View the arduino code
+                <a class="url" href="https://www.jocelynchenjc.com">here!</a></p>
+            <video class="center" height="500" controls>
+                <source src="a1/blink-video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            <p class="imgcaption">Video of the LEDs lighting up starting from green, then yellow, then red.</p>
+        </div>
     </body>
 </html>
