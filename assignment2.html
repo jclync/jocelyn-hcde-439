@@ -94,9 +94,9 @@
                             <span class="code-function">pinMode</span>(rgb_led_pin[i], <span class="code-special">OUTPUT</span>);
                         }
 
-                    <span class="code-comment">// initialize pins for the two buttons (fade button and choose color button) as an input</span>
-                    <span class="code-function">pinMode</span>(fade_pin, <span class="code-special">INPUT</span>);
-                    <span class="code-function">pinMode</span>(choose_color_pin, <span class="code-special">INPUT</span>);
+                        <span class="code-comment">// initialize pins for the two buttons (fade button and choose color button) as an input</span>
+                        <span class="code-function">pinMode</span>(fade_pin, <span class="code-special">INPUT</span>);
+                        <span class="code-function">pinMode</span>(choose_color_pin, <span class="code-special">INPUT</span>);
                     }
 
                     <span class="code-comment">// the loop function runs over and over again forever</span>
@@ -107,13 +107,13 @@
                         <span class="code-structure">while</span> (<span class="code-function">digitalRead</span>(fade_pin) == <span class="code-special">LOW</span>) {
                             <span class="code-comment">// if choose color button is pressed</span>
                             <span class="code-structure">if</span> (<span class="code-function">digitalRead</span>(choose_color_pin) == <span class="code-special">HIGH</span>) {
-                            <span class="code-comment">// increment number of times the button is pressed</span>
-                            num_button_press++;
-                            <span class="code-comment">// if number of presses reaches past the number of leds (3), restart at 0</span>
-                                <span class="code-comment">// this ensures that the value of num_button_press is either: 0, 1, or 2</span>       
-                            num_button_press %= num_leds;
-                            <span class="code-comment">// wait for 300ms</span>
-                            <span class="code-function">delay</span>(300);
+                                <span class="code-comment">// increment number of times the button is pressed</span>
+                                num_button_press++;
+                                <span class="code-comment">// if number of presses reaches past the number of leds (3), restart at 0</span>
+                                    <span class="code-comment">// this ensures that the value of num_button_press is either: 0, 1, or 2</span>       
+                                num_button_press %= num_leds;
+                                <span class="code-comment">// wait for 300ms</span>
+                                <span class="code-function">delay</span>(300);
                             }
 
                             <span class="code-comment">// update the LEDs based on how many times the user has pressed the choose color button.</span>
