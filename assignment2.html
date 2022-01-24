@@ -4,22 +4,173 @@
         <meta charset="utf-8"> 
         <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
 
-        <title>Example Student's HCDE 439 Physical Computing Page!</title> 
+        <title>A2 - Fade!</title> 
 
         <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
 
     </head> 
     <body> 
-
         <div class="header">
-            <h1>Example Student's Assignment 2!</h1>
-            <p>
-            <img src="red-panda.jpg" width=400></a>
+            <div class="left">
+            <h1>Assignment 2 - Fade!!</h1>
+            <h3>January 24, 2022</h3><br />
+            <p>Here is all the documentation for Assignment 2!<br /><br />
+                For this assignment, I was tasked to:<br />
+                <ul>
+                    <li>create a schematic for a circuit containing several LEDs and a button or tilt switch connected to Arduino</li>
+                    <li>implement this circuit using a breadboard</li>
+                    <li>write firmware in Arduino to make at least one of the LEDs fade</li>
+                    <li>the code must use: 
+                        <ul class="subbullet">
+                            <li>a for-loop</li>
+                            <li>digitalWrite()</li>
+                            <li>digitalRead()</li>
+                            <li>analogWrite()</li>
+                        </ul>
+                </ul><br /><br />
+                I decided to create a <em>LED color selector</em> system &#128308; &#128994; &#128309; by using red, green, and blue LEDs.
             </p>
-            <p>
-            Here is all the documentation for assignment 2!
+            </div>
+            <p class="imgcaption"><img src="a2/fadecircuit.gif" width=500></a><br />Here is a gif of my LED color selector circuit in action!
             </p>
         </div>
-        
+        <div class="block">
+            <h2>Schematic</h2>
+            <div class="images">
+                <p class="imgcaption"><img src="a2/fade-schematic-calculations.jpg" width=900px></a><br />Schematic and calculations 
+                    for my circuit.
+                </p>
+            </div>
+            <p>Since I was using red, green, and blue LEDs for my circuit, I did two sets of calculations to determine what the appropriate 
+                resistance to use for each LED: one for the red and green LEDs, and another set of calculations for the blue LED. For red, yellow, 
+                and green LEDs, they all have <em>1.8V voltage drop</em>, and for blue, pink, and white LEDs, they all have <em>3.2 voltage drop</em>. The 
+                desired current for all the LEDs I used was <em>20mA, or 0.02A</em> (found based on the datasheets for the LEDs). When calculating the 
+                appropriate resistance to be used in the circuit, I started with calculating the voltage across. 
+                <br />
+                <strong>Red and Green LEDs:</strong> 
+                Knowing that the Arduino gives 5V, I calculated the voltage across as 3.2V (5V - 1.8V drop = 3.2V across). Using the known voltage across and 
+                the desired current, I then used Ohm's Law with the equation <strong>V=IR</strong> to get a value R=160&#8486; for resistance. To ensure 
+                that I did not overload the LEDs and cause them to burn out, I decided to round up and use a <em>220&#8486; resistor</em> (shown in schematic 
+                above calculations). 
+                <br />
+                <strong>Blue LED:</strong> Knowing that the Arduino gives 5V, I calculated the voltage across as 1.8V 
+                (5V - 3.2V drop = 1.8V across). Using the known voltage across and the desired current, I then used Ohm's Law with the equation 
+                <strong>V=IR</strong> to get a value R=90&#8486; for resistance. To decrease the brightness of the LED, I decided to round up and use a 
+                <em>330&#8486; resistor</em> (shown in schematic above calculations). 
+                <br />
+                <strong>RGB LED:</strong> For the RGB LED, I used the calculations 
+                above for each corresponding color (red, green, and blue) for the LED. I decided to use a <em>330&#8486; resistor</em> for all three for 
+                consistency with the Blue LED.
+                <br />
+                <strong>Buttons:</strong> For each button, I decided to use a <em>10k&#8486; resistor</em> as 10k resistors limit the current of buttons to a 
+                lot less than the max current. For the button to work, we would need a nominal amount of current to flow, and the lower the amount, the less 
+                power would be used (information from Prof Nadya in the class discord). 
+            </p><br />
+            <h2>Circuit</h2>
+            <p> For my circuit, to make the traffic light, I used a red LED, yellow LED, and green LED.
+            <div class="images">
+                <p class="imgcaption"><img src="a2/fade-circuit-top.jpg" height=500></a><br />Top View of my Circuit</p>
+                <p class="imgcaption"><img src="a2/fade-circuit-side.jpg" width=500></a><br />Side View of my Circuit</p>
+            </div>
+            <h2>Arduino Code</h2>
+            <pre>
+                <code>
+                    <span class="code-special">const int</span> fade_pin = 7;                 <span class="code-comment">// pin used for "fade" button to fade the RGB LED</span>
+                    <span class="code-special">const int</span> choose_color_pin = 1;         <span class="code-comment">// pin used for "choose color" button to choose a color (red, green, or blue)</span>
+                    
+                    <span class="code-special">const int</span> leds_pins[] = {3, 4, 5};      <span class="code-comment">// pins for the red, green, green and blue LEDs</span>
+                    <span class="code-special">const int</span> rgb_led_pin[] = {9, 10, 11};  <span class="code-comment">// pins for the RGB LED</span>
+                    <span class="code-special">const int</span> num_leds = 3;                 <span class="code-comment">// number of total leds that a user can choose a color from (red, green, or blue)</span>
+                    
+                    <span class="code-special">int</span> num_button_press = 0;               <span class="code-comment">// the number of times the choose color button is pressed by the user </span>
+                    
+                    <span class="code-comment">// the setup function runs once when you press reset or power the board</span>
+                    <span class="code-special">void</span> <span class="code-structure">setup</span>() {
+                        <span class="code-comment">// initialize pins for the LEDS as an output</span>
+                        <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i < num_leds; i++) {
+                            <span class="code-comment">// pins for the red, green, and blue LEDs</span>
+                            <span class="code-function">pinMode</span>(leds_pins[i], <span class="code-special">OUTPUT</span>);
+                            <span class="code-comment">// pins for the RGB LED</span>
+                            <span class="code-function">pinMode</span>(rgb_led_pin[i], <span class="code-special">OUTPUT</span>);
+                        }
+
+                    <span class="code-comment">// initialize pins for the two buttons (fade button and choose color button) as an input</span>
+                    <span class="code-function">pinMode</span>(fade_pin, <span class="code-special">INPUT</span>);
+                    <span class="code-function">pinMode</span>(choose_color_pin, <span class="code-special">INPUT</span>);
+                    }
+
+                    <span class="code-comment">// the loop function runs over and over again forever</span>
+                    <span class="code-special">void</span> <span class="code-structure">loop</span>() {  
+                        <span class="code-comment">// USER CHOOSES A LED COLOR //</span>
+
+                        <span class="code-comment">// loop until the fade button is pressed</span>
+                        <span class="code-structure">while</span> (<span class="code-function">digitalRead</span>(fade_pin) == <span class="code-special">LOW</span>) {
+                            <span class="code-comment">// if choose color button is pressed</span>
+                            <span class="code-structure">if</span> (<span class="code-function">digitalRead</span>(choose_color_pin) == <span class="code-special">HIGH</span>) {
+                            <span class="code-comment">// increment number of times the button is pressed</span>
+                            num_button_press++;
+                            <span class="code-comment">// if number of presses reaches past the number of leds (3), restart at 0</span>
+                                <span class="code-comment">// this ensures that the value of num_button_press is either: 0, 1, or 2</span>       
+                            num_button_press %= num_leds;
+                            <span class="code-comment">// wait for 300ms</span>
+                            <span class="code-function">delay</span>(300);
+                            }
+
+                            <span class="code-comment">// update the LEDs based on how many times the user has pressed the choose color button.</span>
+                                <span class="code-comment">// button pressed once -> green LED</span>
+                                <span class="code-comment">// button pressed twice -> blue LED</span>
+                                <span class="code-comment">// button pressed three times -> red LED</span>
+                            <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i < num_leds; i++) {
+                            <span class="code-function">digitalWrite</span>(leds_pins[i], num_button_press == i);
+                            }
+
+                            <span class="code-comment">// set the starting color of the RGB LED</span>
+                            <span class="code-function">analogWrite</span>(rgb_led_pin[0], 10); <span class="code-comment">// red color</span>
+                            <span class="code-function">analogWrite</span>(rgb_led_pin[1], 10); <span class="code-comment">// green color</span>
+                            <span class="code-function">analogWrite</span>(rgb_led_pin[2], 10); <span class="code-comment">// blue color</span>
+                        }
+
+                        <span class="code-comment">// FADE THE RGB LED //</span>
+
+                        <span class="code-comment">// if fade button is pressed</span>
+                        <span class="code-structure">if</span> (<span class="code-function">digitalRead</span>(fade_pin) == <span class="code-special">HIGH</span>) {
+                            <span class="code-comment">// fade the RGB LED from 0 to 255 to the corresponding color based on how many times the </span>
+                            <span class="code-comment">// user pressed the choose color button </span>
+                            <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i < 256; i++) {
+                            <span class="code-function">analogWrite</span>(rgb_led_pin[num_button_press], i);
+                            <span class="code-comment">// wait 20ms</span>
+                            <span class="code-function">delay</span>(20);
+                            } 
+                            <span class="code-comment">// wait 50ms</span>
+                            <span class="code-function">delay</span>(50);
+                        }
+                    }
+
+                </code>
+            </pre>
+            <p>Above is a code snippet of my Arduino code. For my code, I initialized the pins as OUTPUTs with their corresponding colors, with Pin3 for the Red LED, Pin4 
+                for the Green LED, and Pin5 for the Blue LED using an array [] and for-loop. I initialized the buttons as INPUTs with Pin1 and Pin7. I used the loop() function to have the code run over and over 
+                again forever. In this loop, I set the code to run when the fade button has not been pressed (using a while loop) so users can press the choose color button to choose a LED color 
+                (red, green, or blue). When the choose color button is pressed, the red, green, and blue LEDs light up in a cycle every time the button is pressed using digitalWrite(). Once the user presses 
+                the fade button, the RGB LED fades to the corresponding color that is chosen. I used digitalRead() to check the status of the button and see if the button was pressed 
+                (ex: digitalRead(fade_pin) == HIGH) or not (ex: digitalRead(fade_pin) == LOW). I analogWrite() was used to fade the RGB LED by color mixing - important to note here that analogWrite() only works 
+                with GPIO pins labeled with '~' (pins 3, 5, 9, 10, 11) -> I had the RGB LED connected to the pins 9, 10, and 11. View the arduino code
+                <a class="url" href="https://github.com/jclync/jclync.github.io/blob/main/a1/A1_Blink.ino">here!</a></p>
+            <video class="center" height="500" controls>
+                <source src="a2/fadevid.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            <p class="imgcaption">Video of the choosing the LED color using the choose color button (left button), and fading the RGB LED to the chosen color by pressing the fade button (right button).</p>
+        </div>
+        <div class="nav-bar">
+            <p><a href="https://jclync.github.io/" class="inline"> &#128281; GO BACK </a></p>
+        </div>
+        <footer class="footer">
+            <p>
+                HCDE 439, Winter 2022<br />
+                University of Washington<br />
+                <a href="https://www.jocelynchenjc.com" class="inline">Jocelyn Chen</a>
+            </p>
+        </footer>
     </body>
 </html>
