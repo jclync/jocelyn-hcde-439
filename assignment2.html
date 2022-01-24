@@ -121,7 +121,7 @@
                                 <span class="code-comment">// button pressed twice -> blue LED</span>
                                 <span class="code-comment">// button pressed three times -> red LED</span>
                             <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i < num_leds; i++) {
-                            <span class="code-function">digitalWrite</span>(leds_pins[i], num_button_press == i);
+                                <span class="code-function">digitalWrite</span>(leds_pins[i], num_button_press == i);
                             }
 
                             <span class="code-comment">// set the starting color of the RGB LED</span>
@@ -137,9 +137,9 @@
                             <span class="code-comment">// fade the RGB LED from 0 to 255 to the corresponding color based on how many times the </span>
                             <span class="code-comment">// user pressed the choose color button </span>
                             <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i < 256; i++) {
-                            <span class="code-function">analogWrite</span>(rgb_led_pin[num_button_press], i);
-                            <span class="code-comment">// wait 20ms</span>
-                            <span class="code-function">delay</span>(20);
+                                <span class="code-function">analogWrite</span>(rgb_led_pin[num_button_press], i);
+                                <span class="code-comment">// wait 20ms</span>
+                                <span class="code-function">delay</span>(20);
                             } 
                             <span class="code-comment">// wait 50ms</span>
                             <span class="code-function">delay</span>(50);
