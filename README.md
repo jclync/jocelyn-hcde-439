@@ -2,4 +2,4 @@
 
 **Instructor:** Nadya Peek
 
-**Teaching assistant:** Blair Subbaraman
+**Teaching assistant:** Brian Kinnee
