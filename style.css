@@ -59,6 +59,10 @@ a:hover {
   padding-right:5vw;
 }
 
+.right {
+  padding-top:40vh;
+}
+
 .subbullet {
   list-style:inside;
   padding: 0px 2rem;

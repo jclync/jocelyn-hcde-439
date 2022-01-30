@@ -1,0 +1,282 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>A3 - Input Output!</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+        <div class="header">
+            <div class="left">
+                <h1>Assignment 3 - Input Output!!</h1>
+                <h3>January 31, 2022</h3><br />
+            <p>Here is all the documentation for Assignment 3!<br /><br />
+                For this assignment, I was tasked to:<br />
+                <ul>
+                    <li>create a schematic for a circuit containing a sensor (ex: either a photoresistor or a thermistor) in a voltage divider to change the state of an output device</li>
+                    <li>implement this circuit using a breadboard</li>
+                    <li>write firmware in Arduino, writing a message to the serial port</li>
+                    <li>the code must use: 
+                        <ul class="subbullet">
+                            <li>analogRead()</li>
+                            <li>analogWrite()</li>
+                            <li>map function</li>
+                            <li>if-statement</li>
+                        </ul>
+                </ul><br /><br />
+            </p>
+            </div>
+            <div class = "right">
+                <p class="imgcaption"><img src="a3/inputoutputcircuit.gif" width=500></a><br />Here is a gif of my LED color selector circuit in action!
+                </p>
+            </div>
+        </div>
+        <div class="description">
+            <p>
+            Building off of the LED color selector circuit I had created for A2, I decided to create a mood-centered <em>LED color selector</em> circuit &#128308; &#128994; &#128309; in conjunction 
+            with a light sensor &#9728; by using red, green, blue, and RGB LEDs, as well as a photoresistor and potentiometer. Users can select a LED color based on their mood, and a corresponding message
+            will be printed out when the LED color is changed.
+            </p>
+        </div>
+        <div class="block">
+            <h2>Schematic</h2>
+            <div class="images">
+                <p class="imgcaption"><img src="a3/inputoutput-schematic-calculations.JPG" width=900px></a><br />Schematic and calculations 
+                    for my circuit.
+                </p>
+            </div>
+            <p>Since I was using red, green, and blue LEDs for my circuit, I did two sets of calculations to determine what the appropriate 
+                resistance to use for each LED: one for the red and green LEDs, and another set of calculations for the blue LED. For red, yellow, 
+                and green LEDs, they all have <em>1.8V voltage drop</em>, and for blue, pink, and white LEDs, they all have <em>3.3 voltage drop</em>. The 
+                desired current for all the LEDs I used was <em>20mA, or 0.02A</em> (found based on the datasheets for the LEDs). When calculating the 
+                appropriate resistance to be used in the circuit, I started with calculating the voltage across. For each of the LEDs, I decided to use 330 
+                &#8486; resistors to be consistent.
+                <br /><br />
+                <strong>Red and Green LEDs:</strong> 
+                Knowing that the Arduino gives 5V, I calculated the voltage across as 3.2V (5V - 1.8V drop = 3.2V across). Using the known voltage across and 
+                the desired current, I then used Ohm's Law with the equation <strong>V=IR</strong> to get a value R=160&#8486; for resistance. To ensure 
+                that I did not overload the LEDs and cause them to burn out, I decided to round up and use a <em>330&#8486; resistor</em> (shown in schematic 
+                above calculations). 
+                <br />--<br />
+                <strong>Blue LED:</strong> Knowing that the Arduino gives 5V, I calculated the voltage across as 1.7V 
+                (5V - 3.3V drop = 1.7V across). Using the known voltage across and the desired current, I then used Ohm's Law with the equation 
+                <strong>V=IR</strong> to get a value R=90&#8486; for resistance. To decrease the brightness of the LED, I decided to round up and use a 
+                <em>330&#8486; resistor</em> (shown in schematic above calculations). 
+                <br />--<br />
+                <strong>RGB LED:</strong> For the RGB LED, I used the calculations 
+                above for each corresponding color (red, green, and blue) for the LED. I decided to use a <em>330&#8486; resistor</em> for all three for 
+                consistency with the other LEDs.
+                <br />--<br />
+                <strong>Photoresistor and Potentiometer (Voltage Dividers)</strong> For the photoresistor and potentiometer, I decided to use a <em>10k&#8486; resistor</em>. 
+                Using the multimeter, I had measured a reading of 10k&#8486; resistance when the potentiometer knob was turned to the very right. I also used the multimeter 
+                to read the voltage of the potentiometer, which I found to have a range of 2.5V-5V. Using these values, I used the equation <strong>R2 =(Vout*R1)/(Vin-Vout)</strong>
+                to get a value of 10k&#8486;. For the photoresistor, I exposed the photoresistor to different intensity brightness to measure resistance. The measured 
+                resistance I got from the multimeter was a range of around 1k-10k&#8486;, and I found that resistance decreased as brightness intensity increased. I found that when
+                the multimeter measured around 10k&#8486; resistance, I measured 2.5V, and 5V when the photoresistor was exposed to really intense luminosity. For calculating R2, I 
+                used the same calculations as I did for the potentiometer of Vin=5V, Vout=2.5V, R1=10k&#8486;, and I calculated R2 to be 10k&#8486;.  
+            </p><br />
+            <h2>Circuit</h2>
+            <p> For my circuit, to make the LED color chooser circuit, I used a red LED, green LED, blue LED, a RGB LED, potentiometer, and photoresistor.
+            <div class="images">
+                <p class="imgcaption"><img src="a3/inputoutput-circuit-top.jpg" height=500></a><br />Top View of my Circuit</p>
+                <p class="imgcaption"><img src="a3/inputoutput-circuit-side.jpg" width=500></a><br />Side View of my Circuit</p>
+            </div>
+            <h2>Arduino Code</h2>
+            <pre>
+                <code>
+    <span class="code-comment">/// SET PINS FOR LEDs and VOLTAGE DIVIDERS ///</span>
+
+    <span class="code-comment">// pins for red, green, and blue LEDs (red = pin3, green = pin5, blue = pin6)</span>
+    <span class="code-special">const int</span> leds_pins[] = {3, 5, 6};
+
+    <span class="code-comment">// pins for the RGB LED</span>
+    <span class="code-special">const int</span> rgb_led_pin[] = {9, 10, 11};
+
+    <span class="code-comment">// number of total leds that a user can choose a color from (red, green, or blue)</span>
+    <span class="code-special">const int</span> num_leds = 3;
+
+    <span class="code-comment">// pin used for "sensor" using the photoresistor (will be used for rgb LED)</span>
+    <span class="code-special">int</span> rgb_sensor_pin = A0;
+
+    <span class="code-comment">// pin used for potentiometer (will be used to choose color of red, green, blue LEDS)</span>
+    <span class="code-special">int</span> choose_color_pin = A5;
+
+
+    <span class="code-comment">/// SETUP FUNCTION ///</span>
+
+    <span class="code-comment">// the setup function runs once when you press reset or power the board</span>
+    <span class="code-special">void</span> <span class="code-structure">setup</span>() {
+        <span class="code-comment">// initialize serial communication at 9600 bits per second:</span>
+        <span class="code-function">Serial</span>.<span class="code-function">begin</span>(9600);
+
+        <span class="code-comment">// initialize pins for the RGB LED as an output</span>
+        <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i < num_leds; i++) {
+            <span class="code-comment">// pins for red, green, and blue LEDs</span>
+            <span class="code-function">pinMode</span>(leds_pins[i], <span class="code-special">OUTPUT</span>);
+            <span class="code-comment">// pins for RGB LED</span>
+            <span class="code-function">pinMode</span>(rgb_led_pin[i], <span class="code-special">OUTPUT</span>);
+        }
+    }
+
+
+    <span class="code-comment">// PRINT BRIGHTNESS STATUS MESSAGE FUNCTION //</span>
+
+    <span class="code-comment">// function to print out brightness status based on the analog in value from the photoresistor</span>
+    <span class="code-comment">//    Parameter:</span>
+    <span class="code-comment">//      - int sensor_value: the analog in value read in from the photoresistor</span>
+    <span class="code-special">void</span> rgbPrint(<span class="code-special">int</span> sensor_value) {
+        <span class="code-comment">// print statements to serial monitor based on current brightness value</span>
+        <span class="code-comment">// bright -> sensor value is at least 450</span>
+        <span class="code-comment">// semi-bright -> sensor value is at least 220 and less than 450</span>
+        <span class="code-comment">// dark -> sensor value is less than 220</span>
+        <span class="code-structure">if</span> (sensor_value >= 450) {
+            <span class="code-comment">// print message that it is bright outside</span>
+            <span class="code-function">Serial</span>.<span class="code-function">println</span>("Quite bright outside!");
+        } <span class="code-structure">else if</span> (sensor_value < 450 & sensor_value >=220) {
+            <span class="code-comment">// print message that it is getting darker</span>
+            <span class="code-function">Serial</span>.<span class="code-function">println</span>("Getting kinda dark :/");
+        } <span class="code-structure">else</span> { <span class="code-comment">// sensor_value < 220</span>
+            <span class="code-comment">// print message that it is too dark</span>
+            <span class="code-function">Serial</span>.<span class="code-function">println</span>("Too dark outside. Shine bright like a diamond! Time to turn the lights brighter!");
+        }
+    }
+
+
+    <span class="code-comment">/// SET RGB LED COLOR & BRIGHTNESS FUNCTION ///</span>
+
+    <span class="code-comment">// function to set the color and brightness of the RGB LED based on the value read in from the photoresistor</span>
+    <span class="code-comment">//    Parameters:</span>
+    <span class="code-comment">//      - int rgb_in: the analog in value read in from the photoresistor</span>
+    <span class="code-comment">//      - int rgb_out: the analog out value to write to the RGB LED</span>
+    <span class="code-comment">//      - int led_num: 0, 1, or 2 (corresponding to red, green, and blue of the RGB LED)</span>
+    <span class="code-special">void</span> rgbSet(<span class="code-special">int</span> rgb_in, <span class="code-special">int</span> rgb_out, <span class="code-special">int</span> led_num) {
+        <span class="code-comment">// if the analog in value is above 650, set the starting color of the RGB LED</span>
+        <span class="code-comment">// else, set the brightness and color accordinglly using the given led_num and rgb_out values</span>
+        <span class="code-structure">if</span> (rgb_in > 650) {
+            <span class="code-comment">// set the starting color of the RGB LED, with red, green, and blue each at 10</span>
+            <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i < num_leds; i++) {
+                <span class="code-function">analogWrite</span>(rgb_led_pin[i], 10); 
+            }
+        } <span class="code-structure">else</span> { <span class="code-comment">// rgb_in < 650</span>
+            <span class="code-comment">// set the given color of the RGB LED to the given output value</span>
+            <span class="code-function">analogWrite</span>(rgb_led_pin[led_num], rgb_out);
+        }
+    }
+
+
+    <span class="code-comment">/// LOOP FUNCTION ///</span>
+
+    <span class="code-comment">// the loop function runs over and over again forever</span>
+    <span class="code-special">void</span> <span class="code-structure">loop</span>() {  
+        <span class="code-comment">// read the analog in value of the photoresistor:</span>
+        <span class="code-special">int</span> rgb_sensor_value = <span class="code-function">analogRead</span>(rgb_sensor_pin);
+
+        <span class="code-comment">// map the rgb_sensor_value to the range of the analog out to calibrate</span>
+            <span class="code-comment">// read in a range 100 - 750</span>
+            <span class="code-comment">// write out a range 255 - 0 (for the LED)</span>
+        <span class="code-special">int</span> rgb_output_value = <span class="code-function">map</span>(rgb_sensor_value, 100, 750, 255, 0);
+
+        <span class="code-comment">// constrain the rgb sensor output to be only from 0 to 255</span>
+        rgb_output_value = <span class="code-function">constrain</span>(rgb_output_value, 0, 255);
+
+        <span class="code-comment">// read the analog in value of the potentiometer to choose a LED color</span>
+        <span class="code-special">int</span> choose_sensor_value = <span class="code-function">analogRead</span>(choose_color_pin);
+
+        <span class="code-comment">// print message based on the value read in from the photoresistor</span>
+        rgbPrint(rgb_sensor_value);
+
+        <span class="code-comment">// turn on a LED based on the analog in value read in from the potentiometer </span>
+            <span class="code-comment">// red LED -> 512 - 680</span>
+            <span class="code-comment">// green LED -> 681 - 850</span>
+            <span class="code-comment">// blue LED -> 851 - 1023</span>
+        <span class="code-structure">if</span> (choose_sensor_value <= 680) {
+            <span class="code-comment">// print message that the light is red</span>
+            <span class="code-function">Serial</span>.<span class="code-function">println</span>("~~ red as a rose ~~");
+            <span class="code-comment">// turn on red led (set value to 255)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[0], 255);
+            <span class="code-comment">// turn off green led (set value to 0)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[1], 0);
+            <span class="code-comment">// turn off blue led (set value to 0)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[2], 0);
+            <span class="code-comment">// set red in RGB LED to the output value</span>
+            rgbSet(rgb_sensor_value, rgb_output_value, 0);
+        } <span class="code-structure">else if</span> (choose_sensor_value > 680 & choose_sensor_value <= 850) {
+            <span class="code-comment">// print message that the light is green</span>
+            <span class="code-function">Serial</span>.<span class="code-function">println</span>("~~ green with envy ~~");
+            <span class="code-comment">// turn off red led (set value to 0)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[0], 0);
+            <span class="code-comment">// turn on green led (set value to 255)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[1], 255);
+            <span class="code-comment">// turn off blue led (set value to 0)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[2], 0);
+            <span class="code-comment">// set green in RGB LED to the output value</span>
+            rgbSet(rgb_sensor_value, rgb_output_value, 1);
+        } <span class="code-structure">else</span> { // chooseSensorValue > 850<span class="code-comment"></span>
+            <span class="code-comment">// print message that the light is blue</span>
+            <span class="code-function">Serial</span>.<span class="code-function">println</span>("~~ feeling the blues ~~");
+            <span class="code-comment">// turn off red led (set value to 0)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[0], 0);
+            <span class="code-comment">// turn off green led (set value to 0)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[1], 0);
+            <span class="code-comment">// turn on blue led (set value to 255)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[2], 255);
+            <span class="code-comment">// set blue in RGB LED to the output value</span>
+            rgbSet(rgb_sensor_value, rgb_output_value, 2);
+        }
+    }
+                </code>
+            </pre>
+            <p> 
+                Above is a code snippet of my Arduino code. For my code, I initialized the pins as OUTPUTs with their corresponding colors, with Pin3 for the Red LED, Pin5 
+                for the Green LED, and Pin6 for the Blue LED using an array [] and for-loop. For the RGB LED, I set them to pins 9-11 and intialized them as OUTPUTs. I used 
+                analogRead() to read in the analog in values from the potentiometer (which I connected to the analog pin A5) and photoresistor (connected to analog pin A0). 
+                From the analog in values that were read in, I used the map function and constrain() to calibrate the values that were read in to map it to the range of the 
+                analog out to write to the LED for output (range of values 0 to 255 for the LEDs). I wanted to increase the brightness of the RGB LED when the photoresistor 
+                input value decreased (light intensity brightness decreased aka less bright). I used the if-statement to increase the LED brightness using analogWrite() 
+                when the photoresistor input sensor value detected less light (I chose to use 650 as the threshold value).
+                
+                View the arduino code
+                <a class="url" href="https://github.com/jclync/jclync.github.io/blob/main/a2/A2_Fade.ino">here!</a></p>
+
+        <div class="serialplot">
+            <h2>Serial Monitor Example Output</h3>
+            <pre>
+                <code>
+    Quite bright outside!
+    ~~ feeling the blues ~~
+    Quite bright outside!
+    ~~ feeling the blues ~~
+    Quite bright outside!
+    ~~ green with envy ~~ 
+    Quite bright outside!
+    ~~ red as a rose ~~
+    Getting kinda dark :/
+    ~~ red as a rose ~~
+    Getting kinda dark :/
+    ~~ red as a rose ~~
+    Too dark outside. Shine bright like a diamond! Time to turn the lights brighter!
+                </code>
+            </pre>
+        </div>
+            <video class="center" height="500" controls>
+                <source src="a3/inputoutputvid.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            <p class="imgcaption">Video of the choosing the LED color by twisting the knob of the potentiometer, and changing the brightness of the RGB LED to the chosen color using the photoresistor.</p>
+        </div>
+        <div class="nav-bar">
+            <p><a href="https://jclync.github.io/" class="inline"> &#128281; GO BACK </a></p>
+        </div>
+        <footer class="footer">
+            <p>
+                HCDE 439, Winter 2022<br />
+                University of Washington<br />
+                <a href="https://www.jocelynchenjc.com" class="inline">Jocelyn Chen</a>
+            </p>
+        </footer>
+    </body>
+</html>
