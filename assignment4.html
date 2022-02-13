@@ -37,7 +37,8 @@
         <div class="description">
             <p>
             Building off of the LED color selector circuits that I had created for A2 and A3, I decided to adapt my previous color selector circuits to fade the 
-            RGB LED to the chosen LED color &#128308; &#128994; &#128309; using <em>capacitive touch</em> &#129295; in the circuit.
+            RGB LED to the chosen LED color &#128308; &#128994; &#128309; using <em>capacitive touch</em> &#129295; in the circuit. For my circuit, the inputs I used were a photoresistor and capacitive sensor, my outputs were LEDs, and I used a library for the capacitive sensor.
+            I used the photoresistor as an input to choose a LED color (red, green, or blue), as well as capacitive touch as another input to fade the RGB LED to the chosen color. Calibration was done using map() and constrain() to map the capacitive sensor readings to a range 0-255 for analogWrite() for the RGB LED.
             </p>
         </div>
         <div class="block">
