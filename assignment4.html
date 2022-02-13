@@ -1,0 +1,258 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>A4 - Libraries!</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+        <div class="header">
+            <div class="left">
+                <h1>Assignment 4 - Libraries!!</h1>
+                <h3>February 14, 2022</h3><br />
+            <p>Here is all the documentation for Assignment 4!<br /><br />
+                For this assignment, I was tasked to:<br />
+                <ul>
+                    <li>create a schematic for a circuit containing an input (ex: sensor, capacitive touch) and an output (ex: actuator, servo, LED) using a library (ex: remote control, capacitive touch, servo motor)</li>
+                    <li>implement this circuit using a breadboard</li>
+                    <li>write firmware in Arduino, writing a message to the serial port</li>
+                    <li>the code must use: 
+                        <ul class="subbullet">
+                            <li>an input part</li>
+                            <li>an output part</li>
+                            <li>at least one of the inputs or outputs should use a library</li>
+                        </ul>
+                </ul><br /><br />
+            </p>
+            </div>
+            <div class = "right">
+                <p class="imgcaption"><img src="a4/librariescircuit.gif" width=500></a><br />Here is a gif of my LED color selector circuit in action!
+                </p>
+            </div>
+        </div>
+        <div class="description">
+            <p>
+            Building off of the LED color selector circuits that I had created for A2 and A3, I decided to adapt my previous color selector circuits to fade the 
+            RGB LED to the chosen LED color &#128308; &#128994; &#128309; using <em>capacitive touch</em> &#129295; in the circuit.
+            </p>
+        </div>
+        <div class="block">
+            <h2>Schematic</h2>
+            <div class="images">
+                <p class="imgcaption"><img src="a4/libraries-schematic-calculations.JPG" width=900px></a><br />Schematic and calculations 
+                    for my circuit.
+                </p>
+            </div>
+            <p>Since I was using red, green, and blue LEDs for my circuit, I did two sets of calculations to determine what the appropriate 
+                resistance to use for each LED: one for the red and green LEDs, and another set of calculations for the blue LED. For red, yellow, 
+                and green LEDs, they all have <em>1.8V voltage drop</em>, and for blue, pink, and white LEDs, they all have <em>3.3 voltage drop</em>. The 
+                desired current for all the LEDs I used was <em>20mA, or 0.02A</em> (found based on the datasheets for the LEDs). When calculating the 
+                appropriate resistance to be used in the circuit, I started with calculating the voltage across. For each of the LEDs, I decided to use 330 
+                &#8486; resistors to be consistent.
+                <br /><br />
+                <strong>Red and Green LEDs:</strong> 
+                Knowing that the Arduino gives 5V, I calculated the voltage across as 3.2V (5V - 1.8V drop = 3.2V across). Using the known voltage across and 
+                the desired current, I then used Ohm's Law with the equation <strong>V=IR</strong> to get a value R=160&#8486; for resistance. To ensure 
+                that I did not overload the LEDs and cause them to burn out, I decided to round up and use a <em>330&#8486; resistor</em> (shown in schematic 
+                above calculations). 
+                <br />--<br />
+                <strong>Blue LED:</strong> Knowing that the Arduino gives 5V, I calculated the voltage across as 1.7V 
+                (5V - 3.3V drop = 1.7V across). Using the known voltage across and the desired current, I then used Ohm's Law with the equation 
+                <strong>V=IR</strong> to get a value R=90&#8486; for resistance. To decrease the brightness of the LED, I decided to round up and use a 
+                <em>330&#8486; resistor</em> (shown in schematic above calculations). 
+                <br />--<br />
+                <strong>RGB LED:</strong> For the RGB LED, I used the calculations 
+                above for each corresponding color (red, green, and blue) for the LED. I decided to use a <em>330&#8486; resistor</em> for all three for 
+                consistency with the other LEDs.
+                <br />--<br />
+                <strong>Photoresistor: </strong> For the photoresistor, I exposed the photoresistor to different intensity brightness to measure resistance. The measured 
+                resistance I got from the multimeter was a range of around 1k-10k&#8486;, and I found that resistance decreased as brightness intensity increased. I found that when
+                the multimeter measured around 10k&#8486; resistance, I measured 2.5V, and 5V when the photoresistor was exposed to really intense luminosity. For calculating R2, I 
+                used the equation R2=(Vout*R1)/(Vin-Vout) using the values Vin=5V, Vout=2.5V, R1=10k&#8486;, and I calculated R2 to be 10k&#8486;.  
+                <br />--<br />
+                <strong>Capacitive Sensor: </strong> I didn't do any calculations for the resistor used with the capacitive sensor, but from reading through the documentation, increase 
+                in resistor values means more sensitivity with the capacitive touch, but at a tradeoff of speed (increase in resistance increases sensitivity, but makes it slower). Here is a list of guidelines for resistor values and approximate sensitivity:
+                <ul>
+                    <li>Use a 1 megohm resistor (or less maybe) for absolute touch to activate. *</li>
+                    <li>With a 10 megohm resistor the sensor will start to respond 4-6 inches away.</li>
+                    <li>With a 40 megohm resistor the sensor will start to respond 12-24 inches away</li>
+                </ul>        
+                <p>* I decided to use the 1 megohm resistor as I wanted to activate the capacitive sensor with absolute touch.</p>    
+            </p><br />
+            <h2>Circuit</h2>
+            <p> For my circuit, to make the LED color chooser circuit, I used a red LED, green LED, blue LED, a RGB LED, potentiometer, and photoresistor.
+            <div class="images">
+                <p class="imgcaption"><img src="a4/libraries-circuit-top.jpg" height=500></a><br />Top View of my Circuit</p>
+                <p class="imgcaption"><img src="a4/libraries-circuit-side.jpg" width=500></a><br />Side View of my Circuit</p>
+            </div>
+            <h2>Arduino Code</h2>
+            <pre>
+                <code>
+    /* A4: Libraries
+    *  Jocelyn Chen
+    *  Monday 2.14.2022
+    *  
+    *  This program is a color selector circuit which input is taken using a photoresistor to 
+    *  choose a LED color to fade a RGB LED to the chosen color using a capacitive sensor.
+    *  
+    */
+
+    <span class="code-comment">// include library for capacitive sensor</span>
+    <span class="code-structure">#include </span> &#60;<span class="code-function">CapacitiveSensor</span>.h>
+
+    <span class="code-comment">// capacitive sensor with 1 megaohm resistor between pins 4 & 2, pin 2 is sensor pin, add wire</span>
+    <span class="code-function">CapacitiveSensor</span>   cs_4_2 = <span class="code-function">CapacitiveSensor</span>(4,2);
+
+    <span class="code-comment">/// SET PINS FOR LEDs and PHOTORESISTOR ///</span>
+
+    <span class="code-comment">// pins for red, green, and blue LEDs (red = pin3, green = pin5, blue = pin6)</span>
+    <span class="code-special">const int</span> leds_pins[] = {3, 5, 6};
+
+    <span class="code-comment">// pins for the RGB LED ( red = pin9, green = pin10, blue = pin11)</span>
+    <span class="code-special">const int</span> rgb_led_pin[] = {9, 10, 11};
+
+    <span class="code-comment">// number of total LEDs that a user can choose a color from (red, green, or blue)</span>
+    <span class="code-special">const int</span> num_leds = 3;
+
+    <span class="code-comment">// pin used for photoresistor sensor (will be used for choosing a LED color: red, green or blue)</span>
+    <span class="code-special">const int</span> sensor_pin = A0;
+
+    <span class="code-comment">// the number LED chosen (corresponding to LED number in leds_pins[] and rgb_led_pin[] arrays)</span>
+    <span class="code-special">int</span> led = 0;
+
+    <span class="code-comment">/// SETUP FUNCTION ///</span>
+    <span class="code-comment">// the setup function runs once when you press reset or power the board</span>
+    <span class="code-special">void</span> <span class="code-structure">setup</span>() {
+        <span class="code-comment">// initialize serial communication at 9600 bits per second:</span>
+        <span class="code-function">Serial</span>.<span class="code-function">begin</span>(9600);
+
+        <span class="code-comment">// initialize pins for the red, green, blue, and RGB LEDs as outputs</span>
+        <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i &#60; num_leds; i++) {
+            <span class="code-comment">// pins for red, green, and blue LEDs</span>
+            <span class="code-function">pinMode</span>(leds_pins[i], <span class="code-special">OUTPUT</span>);
+            <span class="code-comment">// pins for RGB LED</span>
+            <span class="code-function">pinMode</span>(rgb_led_pin[i], <span class="code-special">OUTPUT</span>);
+        }
+    }
+
+    <span class="code-comment">/// CHOOSE COLOR FUNCTION ///</span>
+    <span class="code-comment">// function to choose LED color (red, green, or blue) based on the analog in value from the photoresistor</span>
+    <span class="code-comment">//    Parameter:</span>
+    <span class="code-comment">//      - int sensor_in: the analog in value read in from the photoresistor</span>
+    <span class="code-special">int</span> choose_color(<span class="code-special">int</span> sensor_in) {
+        <span class="code-comment">// change the LED color based on the analog in value</span>
+        <span class="code-comment">//     if analog in value >= 600 -> red LED on</span>
+        <span class="code-comment">//     if analog in value &#60; 600 and >= 350 -> green LED on</span>
+        <span class="code-comment">//     if analog in value &#60; 350 -> blue LED on</span>
+        <span class="code-structure">if</span> (sensor_in >= 600) {
+            <span class="code-comment">// turn red LED on (set pin to 255) and green and blue LEDs off (set pins to 0)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[0], 255);
+            <span class="code-function">analogWrite</span>(leds_pins[1], 0);
+            <span class="code-function">analogWrite</span>(leds_pins[2], 0);
+            <span class="code-comment">// set LED number to 0</span>
+            led = 0;
+        } <span class="code-structure">else if</span> (sensor_in &#60; 600 & sensor_in >= 350) {
+            <span class="code-comment">// turn green LED on (set pin to 255) and red and blue LEDs off (set pins to 0)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[0], 0);
+            <span class="code-function">analogWrite</span>(leds_pins[1], 255);
+            <span class="code-function">analogWrite</span>(leds_pins[2], 0);
+            <span class="code-comment">// set LED number to 1</span>
+            led = 1;  
+        } <span class="code-structure">else</span> { <span class="code-comment">// sensor_in &#60; 300</span>
+            <span class="code-comment">// turn blue LED on (set pin to 255) and red and green LEDs off (set pins to 0)</span>
+            <span class="code-function">analogWrite</span>(leds_pins[0], 0);
+            <span class="code-function">analogWrite</span>(leds_pins[1], 0);
+            <span class="code-function">analogWrite</span>(leds_pins[2], 255); 
+            <span class="code-comment">// set LED number to 2</span>
+            led = 2;
+        }
+        <span class="code-comment">// return the LED number</span>
+        <span class="code-structure">return</span> led;
+    }
+
+    <span class="code-comment">/// FADE RGB FUNCTION ///</span>
+    <span class="code-comment">// function to fade the RGB LED to the chosen LED color based on the capacitive sensor value</span>
+    <span class="code-comment">//    Parameters:</span>
+    <span class="code-comment">//      - int rgb_in: the capacitance value from the capacitive sensor</span>
+    <span class="code-comment">//      - int led_num: the chosen LED color</span>
+    <span class="code-comment">//      - int rgb_out: the constrained value</span>
+    <span class="code-special">void</span> fade_rgb(<span class="code-special">int</span> rgb_in, <span class="code-special">int</span> led_num, <span class="code-special">int</span> rgb_out) {
+        <span class="code-comment">// set color of the RGB LED based on the capacitive sensor reading</span>
+        <span class="code-comment">//     if the capacitive sensor reading is &#60; 100, set the starting color and brightness of the RGB LED</span>
+        <span class="code-comment">//     if the capacitive sensor reading is >= 100, set the RGB LED to the given color and calibrated brightness </span>
+        <span class="code-structure">if</span> (rgb_in &#60; 100) {
+            <span class="code-comment">// set the starting color of the RGB LED, with red, green, and blue each at 10</span>
+            <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i &#60; num_leds; i++) {
+                <span class="code-function">analogWrite</span>(rgb_led_pin[i], 10); 
+            }
+        } <span class="code-structure">else</span> { <span class="code-comment">// rgb_in > 100</span>
+            <span class="code-comment">// set the given color of the RGB LED to the given output value</span>
+            <span class="code-function">analogWrite</span>(rgb_led_pin[led_num], rgb_out);
+        }    
+    }
+
+
+    <span class="code-comment">/// LOOP FUNCTION ///</span>
+
+    <span class="code-comment">// the loop function runs over and over again forever</span>
+    <span class="code-special">void</span> <span class="code-structure">loop</span>() {
+        <span class="code-comment">// set sensor resolution to 30</span>
+        <span class="code-special">long</span> total1 =  cs_4_2.<span class="code-function">capacitiveSensor</span>(30);
+        
+        <span class="code-comment">// wait 100 millisec (delay) to limit data to serial port</span>
+        delay(100);
+        
+        <span class="code-comment">// read the analog in value of the photoresistor:</span>
+        <span class="code-special">int</span> sensor_value = <span class="code-function">analogRead</span>(sensor_pin);
+
+        <span class="code-comment">// map and constrain the capacitive sensor reading to the range of the analog out to calibrate</span>
+        <span class="code-comment">//     read in a range 0 - 800 from the capacitive sensor</span>
+        <span class="code-comment">//     write out a range 0 - 255 (for the LED)</span>
+        <span class="code-special">int</span> cs_value = <span class="code-function">map</span>(total1, 0, 800, 0, 255);
+
+        <span class="code-comment">// constrain the output to be only from 0 to 255</span>
+        <span class="code-special">int</span> cs_constrained = <span class="code-function">constrain</span>(cs_value, 0, 255);
+
+        <span class="code-comment">// choose an LED color (red, green, or blue) based on the analog in reading from the photoresistor</span>
+        <span class="code-special">int</span> chosen_led = choose_color(sensor_value);
+
+        <span class="code-comment">// fade the RGB LED to the given color (using the chosen_led variable) and brightness</span>
+        <span class="code-comment">// (using the capacitive sensor reading and its mapped constrained analog out value)</span>
+        fade_rgb(cs_value, chosen_led, cs_constrained);
+    }
+                </code>
+            </pre>
+            <p> 
+                Above is a code snippet of my Arduino code. For my code, I initialized the pins as OUTPUTs with their corresponding colors, with Pin3 for the Red LED, Pin5 
+                for the Green LED, and Pin6 for the Blue LED using an array [] and for-loop. For the RGB LED, I set them to pins 9-11 and intialized them as OUTPUTs. I used 
+                analogRead() to read in the analog in values from the photoresistor (which I connected to the analog pin A0). From the analog in values that were read in, 
+                I used them to choose an LED color based on which LED was turned on (If the analog in value was >= 600, the red LED would be on. If the analog in value was between 350 and 600, the green 
+                LED would be on. If the analog in value was less than 350, the blue LED would be on). To fade the RGB LED to the chosen color, I used the capacitive sensor and an if-statement. I used the 
+                if-statement to increase fade the RGB to the chosen color using map() and constrain() to calibrate the capacitive sensor input readings to a range of 0-255 to set a brightness of the RGB 
+                LED using analogWrite().
+                
+                View the arduino code
+                <a class="url" href="https://github.com/jclync/jclync.github.io/blob/main/a3/A3_InputOutput.ino">here!</a></p>
+
+            <video class="center" height="500" controls>
+                <source src="a4/librariesvid.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            <p class="imgcaption">Video of the choosing the LED color using the photoresistor, and fading the RGB LED to the chosen color using the capacitive sensor.</p>
+        </div>
+        <div class="nav-bar">
+            <p><a href="https://jclync.github.io/" class="inline"> &#128281; GO BACK </a></p>
+        </div>
+        <footer class="footer">
+            <p>
+                HCDE 439, Winter 2022<br />
+                University of Washington<br />
+                <a href="https://www.jocelynchenjc.com" class="inline">Jocelyn Chen</a>
+            </p>
+        </footer>
+    </body>
+</html>

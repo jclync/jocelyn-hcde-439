@@ -2,4 +2,4 @@
 
 **Instructor:** Nadya Peek
 
-**Teaching assistant:** Brian Kinnee
+**Teaching assistants:** Brian Kinnee, Kenny Le, Annie Liu, Nick Logler
