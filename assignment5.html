@@ -1,0 +1,259 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>A5 - High(er) Voltage and Transistors!</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+        <div class="header">
+            <div class="left">
+                <h1>Assignment 5 - High(er) Voltage and Transistors!!</h1>
+                <h3>February 21, 2022</h3><br />
+            <p>Here is all the documentation for Assignment 5!<br /><br />
+                For this assignment, I was tasked to:<br />
+                <ul>
+                    <li>create a schematic for a circuit uses a transistor to control load power separate from logic power</li>
+                    <li>implement this circuit using a breadboard</li>
+                    <li>write firmware in Arduino, writing a message to the serial port</li>
+                    <li>the code must use: 
+                        <ul class="subbullet">
+                            <li>analogWrite()</li>
+                            <li>a high-load output device</li>
+                            <li>an input sensor that uses a library</li>
+                        </ul>
+                </ul><br /><br />
+            </p>
+            </div>
+            <div class = "right">
+                <p class="imgcaption"><img src="a5/higher-voltage-transistorscircuit.gif" width=500></a><br />Here is a gif of worm picking &#129713; &#129295; circuit in action!
+                </p>
+            </div>
+        </div>
+        <div class="description">
+            <p>
+            For my circuit, I used analogWrite() to change the brightness and colors of the RGB LED and LED strip. For the high-load output device, I used the LED strip, which I connected to an external power supply. For the input sensor,
+            I used an abolute touch capacitive sensor.<br /><br />
+  
+            For this assignment, I decided to create a mini game inspired by Operation and Let's Go Fishin - and I created a pick-all-the-worms-without-picking-the-infected-worm game.<br /><br />
+            <strong>Scenario:</strong> It's Presidents' Day and you decide to go out to have fun to take a break from midterms and homework. Since it's a nice day out, you decide to go fishing, but you 
+            realize you have no more worms left to use as bait :(. The best worms are found in the white mud. But! There's a catch: one of the worms is infected with an autoimmune disease, and 
+            if taken out of its home, it will retaliate by letting out a war cry and spraying a bright poison. Try to grab as many worms as you can without disturbing the infected worm. 
+            If you pick the infected worm... it'll give you a little shock so beware! <br /><br />
+
+            The way this game works is that the worms (aka wires) are stuck in the white mud (aka the upside down bowl). The player(s) pick the worms out of the mud. If the worm is a good worm, nothing will happen.
+            If the worm is the infected worm (aka the wire for the capacitive sensor), the worm will release its bright poison (LED strip will start flashing) as well as let out its war cry (buzzer sound), and the RGB LED 
+            will flash red, signaling the end of the game.
+            </p>
+        </div>
+        <div class="block">
+            <h2>Schematic</h2>
+            <div class="images">
+                <p class="imgcaption"><img src="a5/higher-voltage-transistors-schematic-calculations.JPG" width=900px></a><br />Schematic and calculations 
+                    for my circuit.
+                </p>
+            </div>
+            <p>Since I was using red, green, and blue LEDs (in the RGB LED) for my circuit, I did two sets of calculations to determine what the appropriate 
+                resistance to use for each LED: one for the red and green LEDs, and another set of calculations for the blue and white LEDs. For red, yellow, 
+                and green LEDs, they all have <em>1.8V voltage drop</em>, and for blue, pink, and white LEDs, they all have <em>3.3 voltage drop</em>. The 
+                desired current for all the LEDs I used was <em>20mA, or 0.02A</em> (found based on the datasheets for the LEDs). When calculating the 
+                appropriate resistance to be used in the circuit, I started with calculating the voltage across. For each of the LEDs, I decided to use 220 
+                &#8486; resistors to be consistent.
+                <br /><br />
+                <strong>Red and Green LEDs:</strong> 
+                Knowing that the Arduino gives 5V, I calculated the voltage across as 3.2V (5V - 1.8V drop = 3.2V across). Using the known voltage across and 
+                the desired current, I then used Ohm's Law with the equation <strong>V=IR</strong> to get a value R=160&#8486; for resistance. To ensure 
+                that I did not overload the LEDs and cause them to burn out, I decided to round up and use a <em>220&#8486; resistor</em> (shown in schematic 
+                above calculations). 
+                <br />--<br />
+                <strong>Blue LED:</strong> Knowing that the Arduino gives 5V, I calculated the voltage across as 1.7V 
+                (5V - 3.3V drop = 1.7V across). Using the known voltage across and the desired current, I then used Ohm's Law with the equation 
+                <strong>V=IR</strong> to get a value R=90&#8486; for resistance. To decrease the brightness of the LED, I decided to round up and use a 
+                <em>220&#8486; resistor</em> (shown in schematic above calculations). 
+                <br />--<br />
+                <strong>N-MOSFET Transistor: </strong> For the transistor, I connected the LED strip to it as the high-load output device. From looking at the datasheet for the transistor, the 
+                LED strip box, and from the class lectures, I knew that the N-MOSFET transistor has a max drain current of 32A and Vdss (drain source voltage) of 60V. For the LED strips, it 
+                contains 300 LEDs, and the LEDs are set up so that it groups 3 LEDS in series in a segment, and the segments are in parallel, so there are 100 segments in the strip. The LEDs have 3.3V drop (since they are white). For parallel 
+                circuits, Vtotal = V1 + V2 + V3, so the total voltage drop across one segment is 3*3.3 = 9.9V. Connecting the LED strip to 12V power supply means that there is 12-9.9=1.2Vacross. 
+                The resistor in the segment is 240ohms. Using Ohm's Law to solve for current, I=V/R=2.1V/240ohms=0.00875A. For parallel circuits, Itotal=I1+I2+...+In. Since there are 100 segments, and each
+                segment has the same current, so the total current for the LED strip is 0.00875*100 = 0.875A. 
+                <br />--<br />  
+                <strong>Capacitive Sensor: </strong> I didn't do any calculations for the resistor used with the capacitive sensor, but from reading through the documentation, increase 
+                in resistor values means more sensitivity with the capacitive touch, but at a tradeoff of speed (increase in resistance increases sensitivity, but makes it slower). 
+                Here is a list of guidelines for resistor values and approximate sensitivity:
+                <ul>
+                    <li>Use a 1 megohm resistor (or less maybe) for absolute touch to activate. *</li>
+                    <li>With a 10 megohm resistor the sensor will start to respond 4-6 inches away.</li>
+                    <li>With a 40 megohm resistor the sensor will start to respond 12-24 inches away</li>
+                </ul>   
+                <p>* I decided to use the 1 megohm resistor as I wanted to activate the capacitive sensor with absolute touch.</p>   
+            </p><br />
+            <h2>Circuit</h2>
+            <p> For my circuit, to make the worm picker game, I used a RGB LED, capacitive sensor, and N-MOSFET Transistor.
+            <div class="images">
+                <p class="imgcaption"><img src="a5/higher-voltage-transistors-circuit-top.jpg" height=500></a><br />Top View of my Circuit (with the wires in the white mud/bowl)</p>
+            </div>
+            <div class="images">
+                <p class="imgcaption"><img src="a5/higher-voltage-transistors-circuit-top2.jpg" height=500></a><br />Top View of my Circuit (without the wires in the bowl to show the wire for the capacitive sensor</p>
+            </div>
+            <div class="images">
+                <p class="imgcaption"><img src="a5/higher-voltage-transistors-circuit-closeup.jpg" height=500></a><br />Top View of my Circuit (close up)</p>
+                <p class="imgcaption"><img src="a5/higher-voltage-transistors-circuit-side.jpg" width=500></a><br />Side View of my Circuit</p>
+            </div>
+            <h2>Arduino Code</h2>
+            <pre>
+                <code>
+    /* A5: High(er) Voltage and Transistors
+    *  Jocelyn Chen
+    *  Monday 2.21.2022
+    *  
+    *  This program is a pick-all-the-worms-without-picking-the-infected-worm game (inspired by Operation and Let's Go Fishin games) 
+    *  This program includes a capacitive sensor, RGB LED, N-MOSFET Transistor, and LED strip.
+    *  Some code in this program references Arduino example codes (fading the LED uses the Arduino Fade Example Code).
+    */
+
+    <span class="code-comment">// include library for capacitive sensor</span>
+    <span class="code-structure">#include </span> &#60;<span class="code-function">CapacitiveSensor</span>.h>
+
+    <span class="code-comment">// capacitive sensor with 1 megaohm resistor between pins 4 & 2, pin 2 is sensor pin, add wire</span>
+    <span class="code-function">CapacitiveSensor</span>   cs_4_2 = <span class="code-function">CapacitiveSensor</span>(4,2);
+
+    <span class="code-special">const int</span> nt_pin = 10;         <span class="code-comment">// pin for n-mostfet transistor</span>
+    <span class="code-special">const int</span> buzzer = 7;          <span class="code-comment">// pin for passive buzzer</span>
+    <span class="code-special">const int</span> red_pin = 5;         <span class="code-comment">// pin for red color in RGB LED</span>
+    <span class="code-special">const int</span> green_pin = 6;       <span class="code-comment">// pin for green color in RGB LED</span>
+    <span class="code-special">const int</span> blue_pin = 9;        <span class="code-comment">// pin for blue color in RGB LED</span>
+
+
+    <span class="code-comment">/// SETUP FUNCTION ///</span>
+    <span class="code-comment">// the setup function runs once when you press reset or power the board</span>
+    <span class="code-special">void</span> <span class="code-structure">setup</span>() {
+        <span class="code-function">Serial</span>.<span class="code-function">begin</span>(9600);          <span class="code-comment">// Initialize serial communication at 9600 bits per second:</span>
+        <span class="code-function">pinMode</span>(nt_pin, <span class="code-special">OUTPUT</span>);     <span class="code-comment">// Set pin for N-MOSFET transistor as OUTPUT</span>
+        <span class="code-function">analogWrite</span>(nt_pin, 0);      <span class="code-comment">// Set LED strip initial state to off (0)</span>
+        <span class="code-function">pinMode</span>(buzzer, <span class="code-special">OUTPUT</span>);     <span class="code-comment">// Set pin for buzzer set as OUTPUT</span>
+        <span class="code-function">pinMode</span>(red_pin, <span class="code-special">OUTPUT</span>);    <span class="code-comment">// Set pin for red color in RGB LED as OUTPUT</span>
+        <span class="code-function">analogWrite</span>(red_pin, 0);      <span class="code-comment">// Set RGB LED red color initial state to off (0)</span>
+        <span class="code-function">pinMode</span>(green_pin, <span class="code-special">OUTPUT</span>);  <span class="code-comment">// Set pin for green color in RGB LED as OUTPUT</span>
+        <span class="code-function">analogWrite</span>(green_pin, 0);      <span class="code-comment">// Set RGB LED green color initial state to off (0)</span>
+        <span class="code-function">pinMode</span>(blue_pin, <span class="code-special">OUTPUT</span>);   <span class="code-comment">// Set pin for blue color in RGB LED as OUTPUT</span>
+        <span class="code-function">analogWrite</span>(blue_pin, 0);      <span class="code-comment">// Set RGB LED blue color initial state to off (0)</span>
+    }
+
+    <span class="code-comment">/// ALARM FUNCTION ///</span>
+    <span class="code-comment">// the alarm function sounds the buzzer and flashes the LED strip and RGB LED (red color) using fade</span>
+    <span class="code-special">void</span> alarm() {  
+        <span class="code-comment">// fade out from max to min in increments of 3 points (with max being 100 and min being 0)</span>
+        <span class="code-structure">for</span> (<span class="code-special">int</span> fadeValue = 100 ; fadeValue >= 0; fadeValue -= 3) {
+            <span class="code-comment">// map the RGB LED fade value to the range of frequency for the buzzer to calibrate</span>
+            <span class="code-comment">//    - read in a range 0 to 100 (fade value for the LED)</span>
+            <span class="code-comment">//    - write out a range 900 to 1000 (for buzzer frequency)</span>  
+            <span class="code-special">int</span> frequency = <span class="code-function">map</span>(fadeValue, 0, 100, 900, 1000); 
+            <span class="code-comment">// set buzzer with the mapped frequency value</span>
+            <span class="code-function">tone</span>(buzzer, frequency);
+            <span class="code-comment">// set red color for RGB LED with the fade value</span>
+            <span class="code-function">analogWrite</span>(red_pin, fadeValue);
+            <span class="code-comment">// sets LED strip with fade value</span>
+            <span class="code-function">analogWrite</span>(nt_pin, fadeValue);
+            <span class="code-comment">// wait 20 ms</span>
+            <span class="code-function">delay</span>(20);
+        }
+          
+        <span class="code-comment">// fade in from min to max in increments of 3 points (with max being 100 and min being 0)</span>
+        <span class="code-structure">for</span> (<span class="code-special">int</span> fadeValue = 0; fadeValue &#60;= 100; fadeValue += 3) {
+            <span class="code-comment">// map the RGB LED fade value to the range of frequency for the buzzer to calibrate</span>
+            <span class="code-comment">//    - read in a range 0 to 100 (fade value for the LED)</span>
+            <span class="code-comment">//    - write out a range 900 to 1000 (for buzzer frequency)</span>    
+            <span class="code-special">int</span> frequency = <span class="code-function">map</span>(fadeValue, 0, 100, 900, 1000); 
+            <span class="code-comment">// set buzzer with the mapped frequency value</span>
+            <span class="code-function">tone</span>(buzzer, frequency);
+            <span class="code-comment">// set red color for RGB LED with the fade value</span>
+            <span class="code-function">analogWrite</span>(red_pin, fadeValue);
+            <span class="code-comment">// sets LED strip with fade value</span>
+            <span class="code-function">analogWrite</span>(nt_pin, fadeValue);
+            <span class="code-comment">// wait 20 ms</span>
+            <span class="code-function">delay</span>(20);
+        }
+    }
+    
+    <span class="code-comment">/// GET READING FUNCTION ///</span>
+    <span class="code-comment">// function to read in the capacitive sensor value as a parameter and either:</span>
+    <span class="code-comment">//    - do nothing if a normal worm was picked (reading &#60; 1600)</span>
+    <span class="code-comment">//    - sound the alarm and fade LEDs if the infected worm was picked (reading > 1600)</span>
+    <span class="code-comment">// 1600 was chosen as the capacitive sensor read in values from around 0-1800, so I used 1600 as the threshold value</span>
+    <span class="code-special">void</span> getReading(<span class="code-special">int</span> led_in) {
+        <span class="code-comment">// if the capacitive sensor reading is less than 1600</span>
+        <span class="code-structure">if</span> (led_in &#60; 1600) {
+            <span class="code-comment">// wait 100 ms</span>
+            <span class="code-function">delay</span>(100);
+            <span class="code-comment">// Set LED strip to off (0)</span>
+            <span class="code-function">analogWrite</span>(nt_pin, 0);
+            <span class="code-comment">// Set red color in RGB LED to 20</span>
+            <span class="code-function">analogWrite</span>(red_pin, 20);
+            <span class="code-comment">// Set green color in rgb LED to 20</span>
+            <span class="code-function">analogWrite</span>(green_pin, 20); 
+            <span class="code-comment">// Set blue color in rgb LED to 20</span>
+            <span class="code-function">analogWrite</span>(blue_pin, 20); 
+            <span class="code-comment">// Stop buzzer sound</span>
+            <span class="code-function">noTone</span>(buzzer);
+        } <span class="code-structure">else</span> { <span class="code-comment">// led_in >= 1600 (capacitive sensor reading is greater than equal to 1600)</span>
+            <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i &#60; 5; i++) {
+                <span class="code-comment">// Set green color in rgb LED to 0</span>
+                <span class="code-function">analogWrite</span>(green_pin, 0);
+                <span class="code-comment">// Set blue color in rgb LED to 0</span>
+                <span class="code-function">analogWrite</span>(blue_pin, 0);
+                <span class="code-comment">// sound the buzzer and fade the LED strip and red color in RGB led</span>
+                alarm();
+            }
+        }
+    }
+    
+    <span class="code-comment">/// LOOP FUNCTION ///</span>
+    <span class="code-comment">// the loop function runs over and over again forever</span>
+    <span class="code-special">void</span> <span class="code-structure">loop</span>() {
+        <span class="code-comment">// set sensor resolution to 30</span>
+        <span class="code-special">long</span> total1 =  cs_4_2.<span class="code-function">capacitiveSensor</span>(30);
+        <span class="code-comment">// wait 100 ms (delay) to limit data to serial port</span>
+        <span class="code-function">delay</span>(100);
+        <span class="code-comment">// get capacitive sensor reading and either:</span>
+        <span class="code-comment">//    - do nothing if a normal worm was picked (reading &#60; 1600)</span>
+        <span class="code-comment">//    - sound the alarm if the infected worm was picked (reading >= 1600)</span>
+        getReading(total1);
+    }
+                </code>
+            </pre>
+            <p> 
+                Above is a code snippet of my Arduino code. For my code, I initialized the pins for the LEDs as OUTPUTs. For the input sensor, I used the 
+                capacitive sensor, and the capacitive touch values were used to fade the RGB LED and LED strip, as well as emit sound from the buzzer.
+                If the capacitive sensor value was &#60; 1600, nothing would happen (the LED strip would stay off, and the RGB LED would stay at its 
+                starting color and brightness. Else (capacitive sensor value was >= 1600), the LED strip and red color in the RGB LED would fade to a 
+                fade value, and the buzzer would emit sound to a mapped frequency based on the fade value.
+                
+                View the arduino code
+                <a class="url" href="https://github.com/jclync/jclync.github.io/blob/main/a4/A4_Libraries.ino">here!</a>
+            </p><br /><br />
+
+            <video class="center" height="500" controls>
+                <source src="a5/higher-voltage-transistorsvid.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            <p class="imgcaption">Video of the choosing the LED color using the photoresistor, and fading the RGB LED to the chosen color using the capacitive sensor.<br />
+                 <strong>*WARNING*</strong> Loud buzzer noise and flashing lights <strong>*WARNING*</strong>
+            </p>
+        </div>
+        <div class="nav-bar">
+            <p><a href="https://jclync.github.io/" class="inline"> &#128281; GO BACK </a></p>
+        </div>
+        <footer class="footer">
+            <p>
+                HCDE 439, Winter 2022<br />
+                University of Washington<br />
+                <a href="https://www.jocelynchenjc.com" class="inline">Jocelyn Chen</a>
+            </p>
+        </footer>
+    </body>
+</html>
