@@ -77,7 +77,7 @@
                 <br />--<br />
                 <strong>N-MOSFET Transistor: </strong> For the transistor, I connected the LED strip to it as the high-load output device. From looking at the datasheet for the transistor, the 
                 LED strip box, and from the class lectures, I knew that the N-MOSFET transistor has a max drain current of 32A and Vdss (drain source voltage) of 60V. For the LED strips, it 
-                contains 300 LEDs, and the LEDs are set up so that it groups 3 LEDS in series in a segment, and the segments are in parallel, so there are 100 segments in the strip. The LEDs have 3.3V drop (since they are white). For parallel 
+                contains 300 LEDs, and the LEDs are set up so that the strip groups 3 LEDs in series in a segment, and the segments are in parallel, so there are 100 segments in the strip. The LEDs have 3.3V drop (since they are white). For series 
                 circuits, Vtotal = V1 + V2 + V3, so the total voltage drop across one segment is 3*3.3 = 9.9V. Connecting the LED strip to 12V power supply means that there is 12-9.9=1.2Vacross. 
                 The resistor in the segment is 240ohms. Using Ohm's Law to solve for current, I=V/R=2.1V/240ohms=0.00875A. For parallel circuits, Itotal=I1+I2+...+In. Since there are 100 segments, and each
                 segment has the same current, so the total current for the LED strip is 0.00875*100 = 0.875A. 
@@ -93,7 +93,8 @@
                 <p>* I decided to use the 1 megohm resistor as I wanted to activate the capacitive sensor with absolute touch.</p>   
             </p><br />
             <h2>Circuit</h2>
-            <p> For my circuit, to make the worm picker game, I used a RGB LED, capacitive sensor, and N-MOSFET Transistor.
+            <p> For my circuit, to make the worm picker game, I used a RGB LED, passive buzzer, capacitive sensor, and N-MOSFET Transistor. For the buzzer, I read in the datasheet that the buzzer has rated voltage 3~5V and frequency 
+                range 50~14,000Hz, and it is passive, which means it requires oscillating signal from the Arduino to make sound. To stay within the frequency range, I only used frequencies from 900-1000 for the buzzer.
             <div class="images">
                 <p class="imgcaption"><img src="a5/higher-voltage-transistors-circuit-top.jpg" height=500></a><br />Top View of my Circuit (with the wires in the white mud/bowl)</p>
             </div>
