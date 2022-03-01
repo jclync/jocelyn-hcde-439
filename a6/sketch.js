@@ -82,60 +82,60 @@ function graphData(newData) {
   //
   // joystick pointing at red square     
   if (xPos >= 100 && xPos <= 300 && yPos >= 50 && yPos <= 250) {
-    fill('red');
-    circle(605, 355, 20, 20);
-    colorpicked = "red";
+    fill('red'); // red
+    circle(605, 355, 20); // circle at (605, 355) with diameter 20
+    colorpicked = "red"; // red color has been picked
     // joystick pointing at blue square
   } else if (xPos >= 500 && xPos <= 700 && yPos >= 50 && yPos <= 250) {
-    fill('blue');
-    circle(605, 355, 20, 20);
-    colorpicked = "blue";
+    fill('blue'); // blue
+    circle(605, 355, 20); // circle at (605, 355) with diameter 20
+    colorpicked = "blue"; // blue color has been picked
     // joystick pointing at green square
   } else if (xPos >= 900 && xPos <= 1100 && yPos >= 50 && yPos <= 250) {
     fill('rgb(0, 230, 64)'); // green
-    circle(605, 355, 20, 20);
-    colorpicked = "green";
+    circle(605, 355, 20); // circle at (605, 355) with diameter 20
+    colorpicked = "green"; // green color has been picked
     // joystick pointing at pink square
   } else if (xPos >= 100 && xPos <= 300&& yPos >= 450 && yPos <= 650) {
     fill('rgb(255,0,255)'); // pink
-    circle(605, 355, 20, 20);
-    colorpicked = "pink";
+    circle(605, 355, 20); // circle at (605, 355) with diameter 20
+    colorpicked = "pink"; // pink color has been picked
     // joystick pointing at yellow square
   } else if (xPos >= 500 && xPos <= 700 && yPos >= 450 && yPos <= 650) {
-    fill('yellow');
-    circle(605, 355, 20, 20);
-    colorpicked = "yellow";
+    fill('yellow'); // change fill color to yellow
+    circle(605, 355, 20); // circle at (605, 355) with diameter 20
+    colorpicked = "yellow"; // yellow color has been picked
     // joystick pointing at white square
   } else if (xPos >= 900 && xPos <= 1100 && yPos >= 450 && yPos <= 650) {
-    fill('white');
-    circle(605, 355, 20, 20);
-    colorpicked = "white";
+    fill('white'); // change fill color to white
+    circle(605, 355, 20); // circle at (605, 355) with diameter 20
+    colorpicked = "white"; // white color has been picked
   }
 }
 
 // create the squares on the page, setting the color, coordinates, size (220 by 200), and radius 20
 function createColors() {
   fill('red'); // red
-  rect(100, 50, 220, 200, 20);
+  rect(100, 50, 220, 200, 20); // rectangle at (100, 50) of width 220, height 200, radius 20
 
   fill('blue'); // blue
-  rect(500, 50, 220, 200, 20);
+  rect(500, 50, 220, 200, 20); // rectangle at (500, 50) of width 220, height 200, radius 20
 
   fill('rgb(0, 230, 64)'); // green
-  rect(900, 50, 220, 200, 20);
+  rect(900, 50, 220, 200, 20); // rectangle at (900, 50) of width 220, height 200, radius 20
 
   fill('rgb(255,0,255)'); // pink
-  rect(100, 450, 220, 200, 20);
+  rect(100, 450, 220, 200, 20); // rectangle at (100, 450) of width 220, height 200, radius 20
 
   fill('rgb(255,255,51)'); // yellow
-  rect(500, 450, 220, 200, 20);
+  rect(500, 450, 220, 200, 20); // rectangle at (500, 450) of width 220, height 200, radius 20
 
   fill('rgb(255, 255, 255)'); // white
-  rect(900, 450, 220, 200, 20);   
+  rect(900, 450, 220, 200, 20); // rectangle at (900, 450) of width 220, height 200, radius 20  
 
   // draw Rudolph using circles, points, and lines
   circle(605, 355, 60, 60); // Rudolph's head
-  strokeWeight(5);
+  strokeWeight(5); // stroke weight change to 5
   point(595, 345); // Rudolph's eye
   point(615, 345); // Rudolph's eye
   line(590, 335, 560, 310); // Rudolph's antler

@@ -108,10 +108,10 @@
         
         // initialize pins for the red, green, blue, and RGB LEDs as outputs
         for (int i = 0; i &#60; num_leds; i++) {
-        // pins for red, green, and blue LEDs
-        pinMode(leds_pins[i], OUTPUT);
-        // pins for RGB LED
-        pinMode(rgb_led_pin[i], OUTPUT);
+            // pins for red, green, and blue LEDs
+            pinMode(leds_pins[i], OUTPUT);
+            // pins for RGB LED
+            pinMode(rgb_led_pin[i], OUTPUT);
         }
     }
     
@@ -137,67 +137,67 @@
         /// WEB to ARDUINO ///
         // if there's serial data 
         if (Serial.available() > 0) {
-        // read the serial data
-        int inByte = Serial.read();
-        // send the serial data back out as raw binary data
-        Serial.write(inByte);
+            // read the serial data
+            int inByte = Serial.read();
+            // send the serial data back out as raw binary data
+            Serial.write(inByte);
     
-        // blink the red, green, and blue LEDs 10 times in a circuit if 'b' is pressed
-        if (inByte == 98) { // b pressed
-            // for 10 times
-            for (int i = 0; i &#60; 10; i++) {
-            // for each LED
-            for (int j = 0; j &#60; num_leds; j++) {
-                // turn the LED on at brightness value of 10
-                analogWrite(leds_pins[j], led_brightness);
-                // wait 200 ms
-                delay(200);
-                // turn the LED off
-                analogWrite(leds_pins[j], 0);
-                // wait 200 ms
-                delay(200);
-            }
-            }   
+            // blink the red, green, and blue LEDs 10 times in a circuit if 'b' is pressed
+            if (inByte == 98) { // b pressed
+                // for 10 times
+                for (int i = 0; i &#60; 10; i++) {
+                    // for each LED
+                    for (int j = 0; j &#60; num_leds; j++) {
+                        // turn the LED on at brightness value of 10
+                        analogWrite(leds_pins[j], led_brightness);
+                        // wait 200 ms
+                        delay(200);
+                        // turn the LED off
+                        analogWrite(leds_pins[j], 0);
+                        // wait 200 ms
+                        delay(200);
+                    }
+                }   
             // turn all LEDs (red, blue, green, and RGB) off if space is pressed
-        } else if (inByte == 32) { // space pressed
-            // for each LED
-            for (int i = 0; i &#60; num_leds; i++) {
-            // turn off given RGB LED color
-            analogWrite(rgb_led_pin[i], 0);
-            // turn off given red, green, or blue LED
-            analogWrite(leds_pins[i], 0);
-            }
+            } else if (inByte == 32) { // space pressed
+                // for each LED
+                for (int i = 0; i &#60; num_leds; i++) {
+                    // turn off given RGB LED color
+                    analogWrite(rgb_led_pin[i], 0);
+                    // turn off given red, green, or blue LED
+                    analogWrite(leds_pins[i], 0);
+                }
             // fade all LEDs 5 times if 'p' is pressed
-        } else if (inByte == 112) { // p pressed
-            // for 5 times
-            for (int i = 0; i &#60; 5; i++) {
-            // fade out from min to max in increments of 5 points (with max being 100 and min being 0)
-            for (int fadeValue = 0 ; fadeValue &#60;= 100; fadeValue += 5) {
-                // for each LED
-                for (int j = 0; j &#60; num_leds; j++) {
-                // set the given RGB LED color to the given fade value
-                analogWrite(rgb_led_pin[j], fadeValue);
-                // set the given red, green, or blue LED to given fade value
-                analogWrite(leds_pins[j], fadeValue);
-                // wait 20 ms
-                delay(20);
-                }
-            }
+            } else if (inByte == 112) { // p pressed
+                // for 5 times
+                for (int i = 0; i &#60; 5; i++) {
+                    // fade out from min to max in increments of 5 points (with max being 100 and min being 0)
+                    for (int fadeValue = 0 ; fadeValue &#60;= 100; fadeValue += 5) {
+                        // for each LED
+                        for (int j = 0; j &#60; num_leds; j++) {
+                            // set the given RGB LED color to the given fade value
+                            analogWrite(rgb_led_pin[j], fadeValue);
+                            // set the given red, green, or blue LED to given fade value
+                            analogWrite(leds_pins[j], fadeValue);
+                            // wait 20 ms
+                            delay(20);
+                        }
+                    }
     
-            // fade out from max to min in increments of 5 points (with max being 100 and min being 0)
-            for (int fadeValue = 100 ; fadeValue >= 0; fadeValue -= 5) {
-                // for each LED
-                for (int j = 0; j &#60; num_leds; j++) {
-                // set the given RGB LED color to given fade value
-                analogWrite(rgb_led_pin[j], fadeValue);
-                // set the given red, green, or blue LED to given fade value
-                analogWrite(leds_pins[j], fadeValue);
-                // wait 20 ms
-                delay(20);
+                    // fade out from max to min in increments of 5 points (with max being 100 and min being 0)
+                    for (int fadeValue = 100 ; fadeValue >= 0; fadeValue -= 5) {
+                        // for each LED
+                        for (int j = 0; j &#60; num_leds; j++) {
+                            // set the given RGB LED color to given fade value
+                            analogWrite(rgb_led_pin[j], fadeValue);
+                            // set the given red, green, or blue LED to given fade value
+                            analogWrite(leds_pins[j], fadeValue);
+                            // wait 20 ms
+                            delay(20);
+                        }
+                    }
                 }
             }
-            }
-        }
         }  
     }    
                 </code>
@@ -298,60 +298,60 @@
         //
         // joystick pointing at red square     
         if (xPos >= 100 && xPos &#60;= 300 && yPos >= 50 && yPos &#60;= 250) {
-        fill('red');
-        circle(605, 355, 20, 20);
-        colorpicked = "red";
+        fill('red'); // red
+        circle(605, 355, 20); // circle at (605, 355) with diameter 20
+        colorpicked = "red"; // red color has been picked
         // joystick pointing at blue square
         } else if (xPos >= 500 && xPos &#60;= 700 && yPos >= 50 && yPos &#60;= 250) {
-        fill('blue');
-        circle(605, 355, 20, 20);
-        colorpicked = "blue";
+        fill('blue'); // blue
+        circle(605, 355, 20); // circle at (605, 355) with diameter 20
+        colorpicked = "blue"; // blue color has been picked
         // joystick pointing at green square
         } else if (xPos >= 900 && xPos &#60;= 1100 && yPos >= 50 && yPos &#60;= 250) {
         fill('rgb(0, 230, 64)'); // green
-        circle(605, 355, 20, 20);
-        colorpicked = "green";
+        circle(605, 355, 20); // circle at (605, 355) with diameter 20
+        colorpicked = "green"; // green color has been picked
         // joystick pointing at pink square
         } else if (xPos >= 100 && xPos &#60;= 300&& yPos >= 450 && yPos &#60;= 650) {
         fill('rgb(255,0,255)'); // pink
-        circle(605, 355, 20, 20);
-        colorpicked = "pink";
+        circle(605, 355, 20); // circle at (605, 355) with diameter 20
+        colorpicked = "pink"; // pink color has been picked
         // joystick pointing at yellow square
         } else if (xPos >= 500 && xPos &#60;= 700 && yPos >= 450 && yPos &#60;= 650) {
-        fill('yellow');
-        circle(605, 355, 20, 20);
-        colorpicked = "yellow";
+        fill('yellow'); // change fill color to yellow
+        circle(605, 355, 20); // circle at (605, 355) with diameter 20
+        colorpicked = "yellow"; // yellow color has been picked
         // joystick pointing at white square
         } else if (xPos >= 900 && xPos &#60;= 1100 && yPos >= 450 && yPos &#60;= 650) {
-        fill('white');
-        circle(605, 355, 20, 20);
-        colorpicked = "white";
+        fill('white'); // change fill color to white
+        circle(605, 355, 20); // circle at (605, 355) with diameter 20
+        colorpicked = "white"; // white color has been picked
         }
     }
     
     // create the squares on the page, setting the color, coordinates, size (220 by 200), and radius 20
     function createColors() {
         fill('red'); // red
-        rect(100, 50, 220, 200, 20);
+        rect(100, 50, 220, 200, 20); // rectangle at (100, 50) of width 220, height 200, radius 20
     
         fill('blue'); // blue
-        rect(500, 50, 220, 200, 20);
+        rect(500, 50, 220, 200, 20); // rectangle at (500, 50) of width 220, height 200, radius 20
     
         fill('rgb(0, 230, 64)'); // green
-        rect(900, 50, 220, 200, 20);
+        rect(900, 50, 220, 200, 20); // rectangle at (900, 50) of width 220, height 200, radius 20
     
         fill('rgb(255,0,255)'); // pink
-        rect(100, 450, 220, 200, 20);
+        rect(100, 450, 220, 200, 20); // rectangle at (100, 450) of width 220, height 200, radius 20
     
         fill('rgb(255,255,51)'); // yellow
-        rect(500, 450, 220, 200, 20);
+        rect(500, 450, 220, 200, 20); // rectangle at (500, 450) of width 220, height 200, radius 20
     
         fill('rgb(255, 255, 255)'); // white
-        rect(900, 450, 220, 200, 20);   
+        rect(900, 450, 220, 200, 20); // rectangle at (900, 450) of width 220, height 200, radius 20  
     
         // draw Rudolph using circles, points, and lines
         circle(605, 355, 60, 60); // Rudolph's head
-        strokeWeight(5);
+        strokeWeight(5); // stroke weight change to 5
         point(595, 345); // Rudolph's eye
         point(615, 345); // Rudolph's eye
         line(590, 335, 560, 310); // Rudolph's antler
@@ -369,7 +369,7 @@
     function keyPressed() {
         //console.log("writing key");
         serial.write(key);
-    }                    
+    }                                     
                 </code>
             </pre>
         </div>
