@@ -31,7 +31,7 @@
             </p>
             </div>
             <div class = "right">
-                <p class="imgcaption"><img src="a6/talking-to-the-webcircuit.gif" width=500></a><br />Here is a gif of the joystick/LED &#128377; circuit in action!
+                <p class="imgcaption"><img src="a6/talking-to-the-web-circuit.gif" width=500></a><br />Here is a gif of the joystick/LED &#128377; circuit in action!
                 </p>
             </div>
         </div>
@@ -75,128 +75,305 @@
                 <p class="imgcaption"><img src="a6/talking-to-the-web-circuit-closeup.jpg" height=500></a><br />Top View of my Circuit (close up)</p>
                 <p class="imgcaption"><img src="a6/talking-to-the-web-circuit-side.jpg" width=500></a><br />Side View of my Circuit</p>
             </div>
+            <div>
             <h2>Arduino Code</h2>
             <pre>
                 <code>
-    /* A5: High(er) Voltage and Transistors
+    /* A6: Talking to the web!
     *  Jocelyn Chen
-    *  Monday 2.21.2022
+    *  Monday 2.28.2022
     *  
-    *  This program is a pick-all-the-worms-without-picking-the-infected-worm game (inspired by Operation and Let's Go Fishin games) 
-    *  This program includes a capacitive sensor, RGB LED, N-MOSFET Transistor, and LED strip.
-    *  Some code in this program references Arduino example codes (fading the LED uses the Arduino Fade Example Code).
+    *  Program: pick a color for Rudolph's nose using the joystick! Plus added fun to blink and fade LEDs for party time!
+    *  
+    *  This program runs using a joystick, RGB LED, Red LED, Green LED, and Blue LED. This program creates a webpage with
+    *  p5.js that interacts with the Arduino. 
     */
-
-    <span class="code-comment">// include library for capacitive sensor</span>
-    <span class="code-structure">#include </span> &#60;<span class="code-function">CapacitiveSensor</span>.h>
-
-    <span class="code-comment">// capacitive sensor with 1 megaohm resistor between pins 4 & 2, pin 2 is sensor pin, add wire</span>
-    <span class="code-function">CapacitiveSensor</span>   cs_4_2 = <span class="code-function">CapacitiveSensor</span>(4,2);
-
-    <span class="code-special">const int</span> nt_pin = 10;         <span class="code-comment">// pin for n-mostfet transistor</span>
-    <span class="code-special">const int</span> buzzer = 7;          <span class="code-comment">// pin for passive buzzer</span>
-    <span class="code-special">const int</span> red_pin = 5;         <span class="code-comment">// pin for red color in RGB LED</span>
-    <span class="code-special">const int</span> green_pin = 6;       <span class="code-comment">// pin for green color in RGB LED</span>
-    <span class="code-special">const int</span> blue_pin = 9;        <span class="code-comment">// pin for blue color in RGB LED</span>
-
-
-    <span class="code-comment">/// SETUP FUNCTION ///</span>
-    <span class="code-comment">// the setup function runs once when you press reset or power the board</span>
-    <span class="code-special">void</span> <span class="code-structure">setup</span>() {
-        <span class="code-function">Serial</span>.<span class="code-function">begin</span>(9600);          <span class="code-comment">// Initialize serial communication at 9600 bits per second:</span>
-        <span class="code-function">pinMode</span>(nt_pin, <span class="code-special">OUTPUT</span>);     <span class="code-comment">// Set pin for N-MOSFET transistor as OUTPUT</span>
-        <span class="code-function">analogWrite</span>(nt_pin, 0);      <span class="code-comment">// Set LED strip initial state to off (0)</span>
-        <span class="code-function">pinMode</span>(buzzer, <span class="code-special">OUTPUT</span>);     <span class="code-comment">// Set pin for buzzer set as OUTPUT</span>
-        <span class="code-function">pinMode</span>(red_pin, <span class="code-special">OUTPUT</span>);    <span class="code-comment">// Set pin for red color in RGB LED as OUTPUT</span>
-        <span class="code-function">analogWrite</span>(red_pin, 0);      <span class="code-comment">// Set RGB LED red color initial state to off (0)</span>
-        <span class="code-function">pinMode</span>(green_pin, <span class="code-special">OUTPUT</span>);  <span class="code-comment">// Set pin for green color in RGB LED as OUTPUT</span>
-        <span class="code-function">analogWrite</span>(green_pin, 0);      <span class="code-comment">// Set RGB LED green color initial state to off (0)</span>
-        <span class="code-function">pinMode</span>(blue_pin, <span class="code-special">OUTPUT</span>);   <span class="code-comment">// Set pin for blue color in RGB LED as OUTPUT</span>
-        <span class="code-function">analogWrite</span>(blue_pin, 0);      <span class="code-comment">// Set RGB LED blue color initial state to off (0)</span>
-    }
-
-    <span class="code-comment">/// ALARM FUNCTION ///</span>
-    <span class="code-comment">// the alarm function sounds the buzzer and flashes the LED strip and RGB LED (red color) using fade</span>
-    <span class="code-special">void</span> alarm() {  
-        <span class="code-comment">// fade out from max to min in increments of 3 points (with max being 100 and min being 0)</span>
-        <span class="code-structure">for</span> (<span class="code-special">int</span> fadeValue = 100 ; fadeValue >= 0; fadeValue -= 3) {
-            <span class="code-comment">// map the RGB LED fade value to the range of frequency for the buzzer to calibrate</span>
-            <span class="code-comment">//    - read in a range 0 to 100 (fade value for the LED)</span>
-            <span class="code-comment">//    - write out a range 900 to 1000 (for buzzer frequency)</span>  
-            <span class="code-special">int</span> frequency = <span class="code-function">map</span>(fadeValue, 0, 100, 900, 1000); 
-            <span class="code-comment">// set buzzer with the mapped frequency value</span>
-            <span class="code-function">tone</span>(buzzer, frequency);
-            <span class="code-comment">// set red color for RGB LED with the fade value</span>
-            <span class="code-function">analogWrite</span>(red_pin, fadeValue);
-            <span class="code-comment">// sets LED strip with fade value</span>
-            <span class="code-function">analogWrite</span>(nt_pin, fadeValue);
-            <span class="code-comment">// wait 20 ms</span>
-            <span class="code-function">delay</span>(20);
-        }
-          
-        <span class="code-comment">// fade in from min to max in increments of 3 points (with max being 100 and min being 0)</span>
-        <span class="code-structure">for</span> (<span class="code-special">int</span> fadeValue = 0; fadeValue &#60;= 100; fadeValue += 3) {
-            <span class="code-comment">// map the RGB LED fade value to the range of frequency for the buzzer to calibrate</span>
-            <span class="code-comment">//    - read in a range 0 to 100 (fade value for the LED)</span>
-            <span class="code-comment">//    - write out a range 900 to 1000 (for buzzer frequency)</span>    
-            <span class="code-special">int</span> frequency = <span class="code-function">map</span>(fadeValue, 0, 100, 900, 1000); 
-            <span class="code-comment">// set buzzer with the mapped frequency value</span>
-            <span class="code-function">tone</span>(buzzer, frequency);
-            <span class="code-comment">// set red color for RGB LED with the fade value</span>
-            <span class="code-function">analogWrite</span>(red_pin, fadeValue);
-            <span class="code-comment">// sets LED strip with fade value</span>
-            <span class="code-function">analogWrite</span>(nt_pin, fadeValue);
-            <span class="code-comment">// wait 20 ms</span>
-            <span class="code-function">delay</span>(20);
+    
+    int x = A1;                              // pin for Xvalue of joystick
+    int y = A0;                              // pin for Yvalue of joystick
+    int xval = 0;                            // starting value for xvalue of joystick
+    int yval = 0;                            // starting value for yvalue of joystick
+    int led_brightness = 10;                 // starting value for LED brightness
+    const int leds_pins[] = {3, 5, 6};       // pins for red, green, and blue LEDs (red = pin3, green = pin5, blue = pin6)
+    const int rgb_led_pin[] = {9, 10, 11};   // pins for the RGB LED ( red = pin9, green = pin10, blue = pin11)
+    const int num_leds = 3;                  // number of total LEDs that a user can choose a color from (red, green, or blue)
+    
+    /// SETUP FUNCTION ///
+    // the setup function runs once when you press reset or power the 
+    void setup() {
+        // initialize serial communication at 9600 bits per second
+        Serial.begin(9600); 
+        // set the timeout for parseInt
+        Serial.setTimeout(10);  
+        
+        // initialize pins for the red, green, blue, and RGB LEDs as outputs
+        for (int i = 0; i < num_leds; i++) {
+        // pins for red, green, and blue LEDs
+        pinMode(leds_pins[i], OUTPUT);
+        // pins for RGB LED
+        pinMode(rgb_led_pin[i], OUTPUT);
         }
     }
     
-    <span class="code-comment">/// GET READING FUNCTION ///</span>
-    <span class="code-comment">// function to read in the capacitive sensor value as a parameter and either:</span>
-    <span class="code-comment">//    - do nothing if a normal worm was picked (reading &#60; 1600)</span>
-    <span class="code-comment">//    - sound the alarm and fade LEDs if the infected worm was picked (reading > 1600)</span>
-    <span class="code-comment">// 1600 was chosen as the capacitive sensor read in values from around 0-1800, so I used 1600 as the threshold value</span>
-    <span class="code-special">void</span> getReading(<span class="code-special">int</span> led_in) {
-        <span class="code-comment">// if the capacitive sensor reading is less than 1600</span>
-        <span class="code-structure">if</span> (led_in &#60; 1600) {
-            <span class="code-comment">// wait 100 ms</span>
-            <span class="code-function">delay</span>(100);
-            <span class="code-comment">// Set LED strip to off (0)</span>
-            <span class="code-function">analogWrite</span>(nt_pin, 0);
-            <span class="code-comment">// Set red color in RGB LED to 20</span>
-            <span class="code-function">analogWrite</span>(red_pin, 20);
-            <span class="code-comment">// Set green color in rgb LED to 20</span>
-            <span class="code-function">analogWrite</span>(green_pin, 20); 
-            <span class="code-comment">// Set blue color in rgb LED to 20</span>
-            <span class="code-function">analogWrite</span>(blue_pin, 20); 
-            <span class="code-comment">// Stop buzzer sound</span>
-            <span class="code-function">noTone</span>(buzzer);
-        } <span class="code-structure">else</span> { <span class="code-comment">// led_in >= 1600 (capacitive sensor reading is greater than equal to 1600)</span>
-            <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i &#60; 5; i++) {
-                <span class="code-comment">// Set green color in rgb LED to 0</span>
-                <span class="code-function">analogWrite</span>(green_pin, 0);
-                <span class="code-comment">// Set blue color in rgb LED to 0</span>
-                <span class="code-function">analogWrite</span>(blue_pin, 0);
-                <span class="code-comment">// sound the buzzer and fade the LED strip and red color in RGB led</span>
-                alarm();
+    /// LOOP FUNCTION ///
+    // the loop function runs over and over again forever
+    void loop() {  
+        /// ARDUINO TO p5 ///
+        // read in the xvalue of the joystick
+        xval = analogRead(x);
+        // read in the yvalue of the joystick
+        yval = analogRead(y);
+    
+        // print out the values that were read in to the console in the form [xval, yval]
+        Serial.print("[");
+        Serial.print(xval);
+        Serial.print(",");
+        Serial.print(yval);
+        Serial.println("]");
+    
+        // wait 100 ms
+        delay(100);
+    
+        /// WEB to ARDUINO ///
+        // if there's serial data 
+        if (Serial.available() > 0) {
+        // read the serial data
+        int inByte = Serial.read();
+        // send the serial data back out as raw binary data
+        Serial.write(inByte);
+    
+        // blink the red, green, and blue LEDs 10 times in a circuit if 'b' is pressed
+        if (inByte == 98) { // b pressed
+            // for 10 times
+            for (int i = 0; i < 10; i++) {
+            // for each LED
+            for (int j = 0; j < num_leds; j++) {
+                // turn the LED on at brightness value of 10
+                analogWrite(leds_pins[j], led_brightness);
+                // wait 200 ms
+                delay(200);
+                // turn the LED off
+                analogWrite(leds_pins[j], 0);
+                // wait 200 ms
+                delay(200);
+            }
+            }   
+            // turn all LEDs (red, blue, green, and RGB) off if space is pressed
+        } else if (inByte == 32) { // space pressed
+            // for each LED
+            for (int i = 0; i < num_leds; i++) {
+            // turn off given RGB LED color
+            analogWrite(rgb_led_pin[i], 0);
+            // turn off given red, green, or blue LED
+            analogWrite(leds_pins[i], 0);
+            }
+            // fade all LEDs 5 times if 'p' is pressed
+        } else if (inByte == 112) { // p pressed
+            // for 5 times
+            for (int i = 0; i < 5; i++) {
+            // fade out from min to max in increments of 5 points (with max being 100 and min being 0)
+            for (int fadeValue = 0 ; fadeValue <= 100; fadeValue += 5) {
+                // for each LED
+                for (int j = 0; j < num_leds; j++) {
+                // set the given RGB LED color to the given fade value
+                analogWrite(rgb_led_pin[j], fadeValue);
+                // set the given red, green, or blue LED to given fade value
+                analogWrite(leds_pins[j], fadeValue);
+                // wait 20 ms
+                delay(20);
+                }
+            }
+    
+            // fade out from max to min in increments of 5 points (with max being 100 and min being 0)
+            for (int fadeValue = 100 ; fadeValue >= 0; fadeValue -= 5) {
+                // for each LED
+                for (int j = 0; j < num_leds; j++) {
+                // set the given RGB LED color to given fade value
+                analogWrite(rgb_led_pin[j], fadeValue);
+                // set the given red, green, or blue LED to given fade value
+                analogWrite(leds_pins[j], fadeValue);
+                // wait 20 ms
+                delay(20);
+                }
+            }
             }
         }
-    }
-    
-    <span class="code-comment">/// LOOP FUNCTION ///</span>
-    <span class="code-comment">// the loop function runs over and over again forever</span>
-    <span class="code-special">void</span> <span class="code-structure">loop</span>() {
-        <span class="code-comment">// set sensor resolution to 30</span>
-        <span class="code-special">long</span> total1 =  cs_4_2.<span class="code-function">capacitiveSensor</span>(30);
-        <span class="code-comment">// wait 100 ms (delay) to limit data to serial port</span>
-        <span class="code-function">delay</span>(100);
-        <span class="code-comment">// get capacitive sensor reading and either:</span>
-        <span class="code-comment">//    - do nothing if a normal worm was picked (reading &#60; 1600)</span>
-        <span class="code-comment">//    - sound the alarm if the infected worm was picked (reading >= 1600)</span>
-        getReading(total1);
-    }
+        }  
+    }    
                 </code>
             </pre>
+        </div>
+        <p> 
+            Above is a code snippet of my Arduino code. For my code, I initialized the pins for the LEDs as OUTPUTs. For the input devices, I used the 
+            joystick, and I used LEDs as the output devices.
+            
+            View the arduino code
+            <a class="url" href="https://github.com/jclync/jclync.github.io/blob/main/a5/A5_HigherVoltageTransitors.ino">here!</a>
+        </p><br /><br />
+        <div>
+            <h2>Sketch.js Code</h2>
+            <pre>
+                <code>
+    var serial; // variable to hold an instance of the serialport library
+    var portName = '/dev/tty.usbmodem14101' //rename to the name of your port
+    var dataarray = []; // data coming in over serial
+    var datastring = ""; // data read in from serial
+    var colorpicked = ""; // color picked using joystick
+    
+    
+    function setup() {
+        serial = new p5.SerialPort();       // make a new instance of the serialport library
+        serial.on('list', printList);       // set a callback function for the serialport list event
+        serial.on('connected', serverConnected); // callback for connecting to the server
+        serial.on('open', portOpen);        // callback for the port opening
+        serial.on('data', serialEvent);     // callback for when new data arrives
+        serial.on('error', serialError);    // callback for errors
+        serial.on('close', portClose);      // callback for the port closing
+        
+        serial.list();                      // list the serial ports
+        serial.open(portName);              // open a serial port
+        createCanvas(1200, 700);
+        background(0x08, 0x16, 0x40);
+    }
+        
+    // get the list of ports:
+    function printList(portList) {
+        // portList is an array of serial port names
+        for (var i = 0; i < portList.length; i++) {
+        // Display the list the console:
+        print(i + " " + portList[i]);
+        }
+    }
+    
+    function serverConnected() {
+        print('connected to server.');
+    }
+        
+    function portOpen() {
+        print('the serial port opened.')
+    }
+        
+    function serialError(err) {
+        print('Something went wrong with the serial port. ' + err);
+    }
+        
+    function portClose() {
+        print('The serial port closed.');
+    }
+    
+    function serialEvent() {
+        if (serial.available()) {
+            datastring = serial.readLine(); // readin some serial
+            var newarray;
+        try {
+            newarray = JSON.parse(datastring); // can we parse the serial
+            } catch(err) {
+                //console.log(err);
+        }
+        if (typeof(newarray) == 'object') {
+            dataarray = newarray;
+        }
+        console.log("got back " + datastring);
+        }
+    }
+    
+    function graphData(newData) {
+        // map the range of the input to the window height and width for x position and y position of joystick:
+        var yPos = map(newData[1], 0, 1023, height, 0);
+        var xPos = map(newData[0], 0, 1023, 0, width)
+    
+        background(0x08, 0x16, 0x40); // background navy
+        createColors(); // create rectangles for the different colors to choose from (red, blue, green, purple, white)
+    
+        circle(xPos, yPos, 20, 20); // circle for joystick pointer
+    
+        // change the circle's color (Rudolph's nose) based on where the joystick pointer is located:
+        // - change the fill color, then change the circle to the chosen color
+        //    if joystick is pointing at red square -> change circle to red
+        //    if joystick is pointing at blue square -> change circle to blue
+        //    if joystick is pointing at green square -> change circle to green
+        //    if joystick is pointing at pink square -> change circle to pink 
+        //    if joystick is pointing at yellow square -> change circle to yellow
+        //    if joystick is pointing at white square -> change circle to white
+        //
+        // joystick pointing at red square     
+        if (xPos >= 100 && xPos <= 300 && yPos >= 50 && yPos <= 250) {
+        fill('red');
+        circle(605, 355, 20, 20);
+        colorpicked = "red";
+        // joystick pointing at blue square
+        } else if (xPos >= 500 && xPos <= 700 && yPos >= 50 && yPos <= 250) {
+        fill('blue');
+        circle(605, 355, 20, 20);
+        colorpicked = "blue";
+        // joystick pointing at green square
+        } else if (xPos >= 900 && xPos <= 1100 && yPos >= 50 && yPos <= 250) {
+        fill('rgb(0, 230, 64)'); // green
+        circle(605, 355, 20, 20);
+        colorpicked = "green";
+        // joystick pointing at pink square
+        } else if (xPos >= 100 && xPos <= 300&& yPos >= 450 && yPos <= 650) {
+        fill('rgb(255,0,255)'); // pink
+        circle(605, 355, 20, 20);
+        colorpicked = "pink";
+        // joystick pointing at yellow square
+        } else if (xPos >= 500 && xPos <= 700 && yPos >= 450 && yPos <= 650) {
+        fill('yellow');
+        circle(605, 355, 20, 20);
+        colorpicked = "yellow";
+        // joystick pointing at white square
+        } else if (xPos >= 900 && xPos <= 1100 && yPos >= 450 && yPos <= 650) {
+        fill('white');
+        circle(605, 355, 20, 20);
+        colorpicked = "white";
+        }
+    }
+    
+    // create the squares on the page, setting the color, coordinates, size (220 by 200), and radius 20
+    function createColors() {
+        fill('red'); // red
+        rect(100, 50, 220, 200, 20);
+    
+        fill('blue'); // blue
+        rect(500, 50, 220, 200, 20);
+    
+        fill('rgb(0, 230, 64)'); // green
+        rect(900, 50, 220, 200, 20);
+    
+        fill('rgb(255,0,255)'); // pink
+        rect(100, 450, 220, 200, 20);
+    
+        fill('rgb(255,255,51)'); // yellow
+        rect(500, 450, 220, 200, 20);
+    
+        fill('rgb(255, 255, 255)'); // white
+        rect(900, 450, 220, 200, 20);   
+    
+        // draw Rudolph using circles, points, and lines
+        circle(605, 355, 60, 60); // Rudolph's head
+        strokeWeight(5);
+        point(595, 345); // Rudolph's eye
+        point(615, 345); // Rudolph's eye
+        line(590, 335, 560, 310); // Rudolph's antler
+        line(615, 335, 645, 310); // Rudolph's antler
+        circle(605, 355, 20, 20); // Rudolph's nose
+        text("Pick a color for Rudolph's nose!", 525, 420); // place text under Rudolph
+    }
+    
+    function draw() {
+        graphData(dataarray);
+        text("key pressed: " + key, 30, 30); // text showing what key has been pressed
+        text("color chosen: " + colorpicked, 30, 50); // text showing what color has been chosen
+    }
+    
+    function keyPressed() {
+        //console.log("writing key");
+        serial.write(key);
+    }                    
+                </code>
+            </pre>
+        </div>
+
             <p> 
                 Above is a code snippet of my Arduino code. For my code, I initialized the pins for the LEDs as OUTPUTs. For the input devices, I used the 
                 joystick, and I used LEDs as the output devices.
@@ -206,10 +383,10 @@
             </p><br /><br />
 
             <video class="center" height="500" controls>
-                <source src="a6/talking-to-the-webvid.mp4" type="video/mp4">
+                <source src="a6/talking-to-the-web-vid.mp4" type="video/mp4">
             Your browser does not support the video tag.
             </video>
-            <p class="imgcaption">Video of the choosing the LED color using the photoresistor, and fading the RGB LED to the chosen color using the capacitive sensor.<br />
+            <p class="imgcaption">Video of the circuit working - using the joystick to choose a color for Rudolph's nose, pressing 'b' to blink the LEDs, pressing 'p' to fade the LEDs for party lights, and pressing space to turn the LEDs off.<br />
                  <strong>*WARNING*</strong> Bright flashing lights <strong>*WARNING*</strong>
             </p>
         </div>
