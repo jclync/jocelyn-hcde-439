@@ -158,7 +158,7 @@
                         delay(200);
                     }
                 }   
-            // turn all LEDs (red, blue, green, and RGB) off if space is pressed
+              // turn all LEDs (red, blue, green, and RGB) off if space is pressed
             } else if (inByte == 32) { // space pressed
                 // for each LED
                 for (int i = 0; i &#60; num_leds; i++) {
@@ -167,7 +167,7 @@
                     // turn off given red, green, or blue LED
                     analogWrite(leds_pins[i], 0);
                 }
-            // fade all LEDs 5 times if 'p' is pressed
+              // fade all LEDs (red, blue, green, and RGB) 5 times if 'p' is pressed
             } else if (inByte == 112) { // p pressed
                 // for 5 times
                 for (int i = 0; i &#60; 5; i++) {
