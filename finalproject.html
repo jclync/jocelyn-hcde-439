@@ -205,6 +205,12 @@
             
             View the arduino code
             <a class="url" href="https://github.com/jclync/jclync.github.io/blob/main/finalproject/final_project.ino">here!</a>
+            <p class="imgcaption"><img src="finalproject/final-project-code-flowchart.jpg" height=400></a><br />The way the stair lights are activated is through this flowchart. 
+                First, the sensor value of the photoresistor is looked at: if the analog read value is less than 100 (it is dark), then the PIR motion sensor is activated and the 
+                red LED is turned on (to indicate that the PIR motion sensor is active). If the analog read value is >= 100, then nothing happens (it is not dark). Then the PIR motion 
+                sensor digital read value is looked at. If the PIR motion sensor value is HIGH, motion is detected, and the stair light (LED strip) turns on. To count how much time is left while the stair 
+                light is on, the red LED blinks on and off 30 times, 1x per second. If the PIR motion sensor value is LOW, this means no motion is detected, and nothing changes.
+            </p>
         </p><br /><br />
     </div>
     <h2>Videos</h2>
