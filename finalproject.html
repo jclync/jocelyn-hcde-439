@@ -1,0 +1,255 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>Final Project - Motion activated stair lights!</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+        <div class="header">
+            <div class="left">
+                <h1>Final Project - Motion activated stair lights !!</h1>
+                <h3>March 10, 2022</h3><br />
+            <p>Here is all the documentation for my final project!<br /><br />
+                For this assignment, I was tasked to:<br />
+                <ul>
+                    <li>integrate the electronics skills I have learned this past quarter into a PRODUCT</li>
+                    <li>the final project must: 
+                        <ul class="subbullet">
+                            <li>take some input and connect that to some output through digital logic</li>
+                            <li>be integrated into a prototype (so it cannot just be a breadboard on the table!)</li>
+                        </ul>
+                </ul><br /><br />
+            </p>
+            </div>
+            <div class = "right">
+                <p class="imgcaption"><img src="finalproject/final-project-video.gif" height=400></a><br />Here is a gif of the motion activated stair light &#128161; in action!
+                </p>
+            </div>
+        </div>
+        <div class="description">
+            <p>
+            For my final project, I decided to make motion activated stair lights. I often trip on the stairs when it is dark (because I'm too lazy to try to find the light switch when it's dark), so I wanted to make lights for the stairs that turn on when it is dark and when motion is detected!
+            </p>
+        </div>
+        <div class="block">
+            <h2>Schematic</h2>
+            <div class="images">
+                <p class="imgcaption"><img src="finalproject/final-project-schematic-calculations.JPG" width=900px></a><br />Schematic and calculations 
+                    for my final project.
+                </p>
+            </div>
+            <p>Since I was using a red LED and the LED strip for my circuit, I calculated the appropriate 
+                resistance to use for the red LED. And I did another set of calculations for seeing the amount of current used by the LED strip. For red, yellow, 
+                and green LEDs, they all have <em>1.8V voltage drop</em>, and for blue, pink, and white LEDs, they all have <em>3.3 voltage drop</em>. The 
+                desired current for the red LED I used was <em>20mA, or 0.02A</em> (found based on the datasheets for the LEDs). When calculating the 
+                appropriate resistance to be used in the circuit, I started with calculating the voltage across. For the red LED, I decided to round up and use a 220 
+                &#8486; resistor.
+                <br /><br />
+                <strong>Red LED:</strong> 
+                Knowing that the Arduino gives 5V, I calculated the voltage across as 3.2V (5V - 1.8V drop = 3.2V across). Using the known voltage across and 
+                the desired current, I then used Ohm's Law with the equation <strong>V=IR</strong> to get a value R=160&#8486; for resistance. To ensure 
+                that I did not overload the LEDs and cause it to burn out, I decided to round up and use a <em>330&#8486; resistor</em> (shown in schematic 
+                above calculations). 
+                <br />--<br />  
+                <strong>N-MOSFET Transistor: </strong> For the transistor, I connected the LED strip to it as the high-load output device. From looking at the datasheet for the transistor, the 
+                LED strip box, and from the class lectures, I knew that the N-MOSFET transistor has a max drain current of 32A and Vdss (drain source voltage) of 60V. For the LED strips, it 
+                contains 300 LEDs, and the LEDs are set up so that the strip groups 3 LEDs in series in a segment, and the segments are in parallel, so there are 100 segments in the strip. The LEDs have 3.3V drop (since they are white). For series 
+                circuits, Vtotal = V1 + V2 + V3, so the total voltage drop across one segment is 3*3.3 = 9.9V. Connecting the LED strip to 12V power supply means that there is 12-9.9=1.2Vacross. 
+                The resistor in the segment is 240ohms. Using Ohm's Law to solve for current, I=V/R=2.1V/240ohms=0.00875A. For parallel circuits, Itotal=I1+I2+...+In. Since there are 100 segments, and each
+                segment has the same current, so the total current for the LED strip is 0.00875*100 = 0.875A. 
+                <br />--<br />  
+                <strong>Photoresistor: </strong> For the photoresistor, I exposed the photoresistor to different intensity brightness to measure resistance. The measured 
+                resistance I got from the multimeter was a range of around 1k-10k&#8486;, and I found that resistance decreased as brightness intensity increased. I found that when
+                the multimeter measured around 10k&#8486; resistance, I measured 2.5V, and 5V when the photoresistor was exposed to really intense luminosity. For calculating R2, I 
+                used the equation R2=(Vout*R1)/(Vin-Vout) using the values Vin=5V, Vout=2.5V, R1=10k&#8486;, and I calculated R2 to be 10k&#8486;.  
+
+            </p><br />
+            <h2>Circuit</h2>
+            <p> For my final project, here is my Bill of Materials:
+                <ul>
+                    <li>LEDs (LED strip)</li>
+                    <li>Photoresistor (for light sensing)</li>
+                    <li>PIR motion sensor module (for motion sensing)</li>
+                    <li>Assorted resistors (for current-limiting)</li>
+                    <li>Wires</li>
+                </ul><br /><br />    
+            <div class="images">
+                <p class="imgcaption"><img src="finalproject/final-project-circuit.jpg" height=500></a><br />Circuit</p>
+            </div>
+            <h2>Project Execution</h2>
+                <p> 
+                To put everything together, I decided to construct a little box to hide the breadboard, Arduino, and wires. I cut up an old shoe box and used a pocky box to put the Arduino and breadboard. 
+                So motion could be detected, I taped the PIR motion sensor module outside the box. I also taped the photoresistor to be poking out of the box as well to detect light intensity (if it is dark or bright).
+                I used the red LED to show when the motion sensor was active (so the red LED turned on when it was dark).
+                </p>
+            <div class="images">
+                <p class="imgcaption"><img src="finalproject/final-project-circuit-box-before.jpg" height=300></a><br />Box Enclosure</p>
+                <p class="imgcaption"><img src="finalproject/final-project-arduino.jpg" width=300></a><br />Arduino nested inside the box</p>
+                <p class="imgcaption"><img src="finalproject/final-project-breadboard.jpg" width=300></a><br />Breadboard inside the box</p>
+            </div>
+                <p> 
+                To make my box look a little nicer, I cut out white cardstock paper to line the outsides of the box, and I left the back open to be able to easily access the Arduino and breadboard.
+                </p>
+                <div class="images">
+                    <p class="imgcaption"><img src="finalproject/final-project-enclosed-box.jpg" height=300></a><br />Open back of box enclosure</p>
+                    <p class="imgcaption"><img src="finalproject/final-project-circuit-box-front.jpg" width=300></a><br />Front of box (PIR motion sensor and red LED in center, and photoresistor sticking out the right side)</p>
+                    <p class="imgcaption"><img src="finalproject/final-project-circuit-box-side.jpg" width=300></a><br />Plugs for Arduino to connect to power supply</p>
+                </div>
+            <div>
+            <h2>Arduino Code</h2>
+            <pre>
+                <code>
+    /* HCDE 439 Final Project!
+    *  Jocelyn Chen
+    *  Thursday 3.10.2022
+    *  
+    *  Program: Make LED strip light up along staircase if motion is detected (when it is dark).
+    *  
+    */
+    
+    <span class="code-special">const int</span> led_pin = 9;            <span class="code-comment">// pin for red LED (used to indicate that motion sensor is active)</span>
+    <span class="code-special">const int</span> pir_pin = 5;            <span class="code-comment">// pin for PIR motion sensor module output pin (read HIGH or LOW)</span>
+    <span class="code-special">const int</span> leds_pin = 3;           <span class="code-comment">// pin for LED Strip</span>
+    <span class="code-special">const int</span> pr_pin = A0;            <span class="code-comment">// pin for photoresistor sensor (detect if it is dark)</span>
+    <span class="code-special">int</span> pir_value = 0;                <span class="code-comment">// status of PIR motion sensor</span>
+    <span class="code-special">int</span> pr_value = 0;                 <span class="code-comment">// status of photoresistor</span>
+    
+    <span class="code-comment">/// SETUP FUNCTION ///</span>
+    <span class="code-comment">// the setup function runs once when you press reset or power the arduino</span>
+    <span class="code-special">void</span> <span class="code-structure">setup</span>() {
+        <span class="code-comment">// set pin for red LED as OUTPUT</span>
+        <span class="code-function">pinMode</span>(led_pin, <span class="code-special">OUTPUT</span>);
+        <span class="code-comment">// set pin for LED strip as OUTPUT</span>
+        <span class="code-function">pinMode</span>(leds_pin, <span class="code-special">OUTPUT</span>);
+        <span class="code-comment">// set pin for PIR motion sensor as INPUT</span>
+        <span class="code-function">pinMode</span>(pir_pin, <span class="code-special">INPUT</span>);
+        <span class="code-comment">// intialize LED strip as off (analog value to 0)</span>
+        <span class="code-function">analogWrite</span>(leds_pin, 0);
+        <span class="code-comment">// initialize serial communication at 9600 bits per second</span>
+        <span class="code-function">Serial</span>.<span class="code-function">begin</span>(9600);
+    }
+    
+    <span class="code-comment">/// COUNT THIRTY FUNCTION ///</span>
+    <span class="code-comment">// Blinks red LED on and off 30 times (as a time indicator for showing thirty seconds have passed)</span>
+    <span class="code-special">void</span> countThirty() {
+        <span class="code-comment">// integer for counting the number of seconds</span>
+        <span class="code-special">int</span> num_sec = 0;
+        <span class="code-comment">// loop 15 times</span>
+        <span class="code-structure">for</span> (<span class="code-special">int</span> i = 0; i &#60; 15; i++) {
+            <span class="code-comment">// turn red LED off (set analog value to 0)</span>
+            <span class="code-function">analogWrite</span>(led_pin, 0);
+            <span class="code-comment">// wait 1 second</span>
+            <span class="code-function">delay(1000);</span>
+            <span class="code-comment">// increment num_sec variable up by one</span>
+            num_sec++;
+            <span class="code-comment">// for debugging: print out current number of seconds to serial monitor</span>
+            <span class="code-function">Serial</span>.<span class="code-function">print</span>(num_sec);
+            <span class="code-function">Serial</span>.<span class="code-function">println</span>(" sec");
+            <span class="code-comment">// turn red LED on (set analog value to 100)</span>
+            <span class="code-function">analogWrite</span>(led_pin, 100);
+            <span class="code-comment">// wait 1 second</span>
+            <span class="code-function">delay</span>(1000);
+            <span class="code-comment">// increment num_sec variable up by one</span>
+            num_sec++;
+            <span class="code-comment">// for debugging: print out current number of seconds to serial monitor</span>
+            <span class="code-function">Serial</span>.<span class="code-function">print</span>(num_sec);
+            <span class="code-function">Serial</span>.<span class="code-function">println</span>(" sec");
+        }
+    }
+    
+    <span class="code-comment">/// LOOP FUNCTION ///</span>
+    <span class="code-comment">// the loop function runs over and over again forever</span>
+    <span class="code-special">void</span> <span class="code-structure">loop</span>(){ 
+        <span class="code-comment">// read the analog in value of the photoresistor</span>
+        pr_value = <span class="code-function">analogRead</span>(pr_pin);
+    
+        <span class="code-comment">// for debugging: print out photoresistor values to the serial monitor</span>
+        <span class="code-function">Serial</span>.<span class="code-function">print</span>("photoresistor value in: ");
+        <span class="code-function">Serial</span>.<span class="code-function">println</span>(pr_value); 
+    
+        <span class="code-comment">// if analog in from photoresistor is less than 100 (detects that it is dark)</span>
+        <span class="code-structure">if</span> (pr_value &#60; 100) {
+            <span class="code-comment">// turn red LED on (set analog value to 100)</span>
+            <span class="code-function">analogWrite</span>(led_pin, 100);
+            <span class="code-comment">// read the digital in value of the PIR motion sensor (detect if there is motion; 1 if motion, 0 if no motion)</span>
+            pir_value = <span class="code-function">digitalRead</span>(pir_pin); 
+            <span class="code-comment">// if motion is detected</span>
+            <span class="code-structure">if</span> (pir_value == <span class="code-special">HIGH</span>) {
+                <span class="code-comment">// turn LED strip on (set analog value to 100);</span>
+                <span class="code-function">analogWrite</span>(leds_pin, 100);
+                <span class="code-comment">// print out PIR motion sensor value to serial monitor</span>
+                <span class="code-function">Serial</span>.<span class="code-function">print</span>(pir_value);
+                <span class="code-comment">// print out motion detected message to serial monitor</span>
+                <span class="code-function">Serial</span>.<span class="code-function">println</span>("Motion detected; turn on led!!!");
+                <span class="code-comment"></span>// wait 30 seconds
+                countThirty();
+            } <span class="code-structure">else</span> { <span class="code-comment">// no motion detected</span>
+            <span class="code-comment">// turn LED strip off if there is no motion</span>
+            <span class="code-function">analogWrite</span>(leds_pin, 0);
+            }
+        } <span class="code-structure">else</span> { <span class="code-comment">// photoresistor value > 100 (not dark)</span>
+            <span class="code-comment">// turn red LED off (set analog value to 0)</span>
+            <span class="code-function">analogWrite</span>(led_pin, 0);
+        }
+    }     
+                </code>
+            </pre>
+
+        <p> 
+            Above is a code snippet of my Arduino code. For my code, I initialized the pins for the LEDs as OUTPUTs, and the photoresistor as an INPUT. 
+            
+            View the arduino code
+            <a class="url" href="https://github.com/jclync/jclync.github.io/blob/main/a6/A6_Talking_to_the_web.ino">here!</a>
+        </p><br /><br />
+    </div>
+    <h2>Videos</h2>
+    <div class="images">
+        <p class="imgcaption"><img src="finalproject/final-project-video.gif" height=400></a><br />Here is a gif of the motion activated stair light &#128161; in action!
+        </p>
+        <p class="imgcaption"><img src="finalproject/demoview.gif" height=400></a><br />Motion is sensed, and LED strip turns on &#128161; (recruited my sister for the video demo)
+        </p>
+        <p class="imgcaption"><img src="finalproject/final-project1.gif" height=400></a><br />Gif of the red LED blinking on and off when motion has been detected
+        </p>
+    </div>
+    <di class="images">
+            <video class="center" height="500" controls>
+                <source src="finalproject/final-project-video-demo.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            <p class="imgcaption">Demo showing the motion sensor being activated when the photoresistor reads that it is dark, turning on the LEDs on the stairs.
+            </p>
+            <br />
+
+            <video class="center" height="500" controls>
+                <source src="finalproject/demoview.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            <p class="imgcaption">Motion is sensed, and LED strip turns on &#128161; (recruited my sister for the video demo)
+            </p>
+            <br />
+
+            <video class="center" height="500" controls>
+                <source src="finalproject/final-project-video1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+            </video>
+            <p class="imgcaption">Video of the red LED blinking when motion has been detected
+            </p>
+            <br />
+        </div>
+        <div class="nav-bar">
+            <p><a href="https://jclync.github.io/" class="inline"> &#128281; GO BACK </a></p>
+        </div>
+        <footer class="footer">
+            <p>
+                HCDE 439, Winter 2022<br />
+                University of Washington<br />
+                <a href="https://www.jocelynchenjc.com" class="inline">Jocelyn Chen</a>
+            </p>
+        </footer>
+    </body>
+</html>

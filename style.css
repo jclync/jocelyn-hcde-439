@@ -137,6 +137,17 @@ p {
   float: left;
 }
 
+.final {
+  font-size: 12px;
+  line-height: 24px;
+  font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  padding: 20px 20px 20px 30px;
+  width: 250px;
+  height: 600px;
+  overflow: hidden;
+  float: left;
+}
+
 .assignment:hover { overflow:auto }
 
 .assignment a {
@@ -148,6 +159,19 @@ p {
   background: #b60047;
   color: #b60047;
   text-decoration: none;
+}
+
+.final:hover { overflow:auto }
+
+.final a {
+  color: #000;
+  text-decoration: none;
+}
+
+.final a:hover {
+background: #b60047;
+color: #b60047;
+text-decoration: none;
 }
 
 .nav-bar {
